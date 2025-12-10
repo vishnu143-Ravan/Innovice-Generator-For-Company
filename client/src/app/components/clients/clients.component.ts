@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
@@ -91,9 +91,9 @@ import { Client } from '../../models/models';
     </div>
   `
 })
-export class ClientsComponent implements OnInit {
+export class ClientsComponent implements AfterViewInit {
   clients: Client[] = [];
-  loading = false;
+  loading = true;
   dialogVisible = false;
   editMode = false;
   currentClient: Partial<Client> = {};
@@ -104,8 +104,8 @@ export class ClientsComponent implements OnInit {
     private messageService: MessageService
   ) {}
 
-  ngOnInit() {
-    this.loadClients();
+  ngAfterViewInit() {
+    setTimeout(() => this.loadClients(), 0);
   }
 
   loadClients() {

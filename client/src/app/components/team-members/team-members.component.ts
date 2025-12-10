@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
@@ -103,9 +103,9 @@ import { TeamMember } from '../../models/models';
     </div>
   `
 })
-export class TeamMembersComponent implements OnInit {
+export class TeamMembersComponent implements AfterViewInit {
   teamMembers: TeamMember[] = [];
-  loading = false;
+  loading = true;
   dialogVisible = false;
   editMode = false;
   currentMember: any = {};
@@ -121,8 +121,8 @@ export class TeamMembersComponent implements OnInit {
     private messageService: MessageService
   ) {}
 
-  ngOnInit() {
-    this.loadMembers();
+  ngAfterViewInit() {
+    setTimeout(() => this.loadMembers(), 0);
   }
 
   loadMembers() {

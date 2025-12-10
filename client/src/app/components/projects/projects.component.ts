@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
@@ -128,11 +128,11 @@ import { Project, Client, TeamMember } from '../../models/models';
     </div>
   `
 })
-export class ProjectsComponent implements OnInit {
+export class ProjectsComponent implements AfterViewInit {
   projects: Project[] = [];
   clients: Client[] = [];
   teamMembers: TeamMember[] = [];
-  loading = false;
+  loading = true;
   dialogVisible = false;
   editMode = false;
   currentProject: any = {};
@@ -157,8 +157,8 @@ export class ProjectsComponent implements OnInit {
     private messageService: MessageService
   ) {}
 
-  ngOnInit() {
-    this.loadData();
+  ngAfterViewInit() {
+    setTimeout(() => this.loadData(), 0);
   }
 
   loadData() {

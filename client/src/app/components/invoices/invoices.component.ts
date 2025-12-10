@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
@@ -172,11 +172,11 @@ import autoTable from 'jspdf-autotable';
     </div>
   `
 })
-export class InvoicesComponent implements OnInit {
+export class InvoicesComponent implements AfterViewInit {
   invoices: Invoice[] = [];
   clients: Client[] = [];
   projects: Project[] = [];
-  loading = false;
+  loading = true;
   
   generateDialogVisible = false;
   viewDialogVisible = false;
@@ -195,8 +195,8 @@ export class InvoicesComponent implements OnInit {
     private messageService: MessageService
   ) {}
 
-  ngOnInit() {
-    this.loadData();
+  ngAfterViewInit() {
+    setTimeout(() => this.loadData(), 0);
   }
 
   loadData() {
