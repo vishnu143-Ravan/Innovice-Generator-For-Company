@@ -1,10 +1,10 @@
 # Project & Resource Management System
 
 ## Overview
-A complete project and resource management system with invoicing capabilities. Built with Angular frontend and Node.js/Express backend using PostgreSQL database.
+A complete project and resource management system with invoicing capabilities. Built with Angular frontend using PrimeNG for data grids and Bootstrap for styling, Node.js/Express backend, and PostgreSQL database.
 
 ## Tech Stack
-- **Frontend**: Angular 21 with PrimeNG v19 UI components
+- **Frontend**: Angular 21 with PrimeNG v19 (DataTables, Dialogs, Forms) and Bootstrap 5 for styling
 - **Backend**: Node.js with Express.js
 - **Database**: PostgreSQL with Drizzle ORM
 - **PDF Generation**: jsPDF with autotable
@@ -24,7 +24,7 @@ A complete project and resource management system with invoicing capabilities. B
 │   │   │   │   └── layout/
 │   │   │   ├── services/    # API service
 │   │   │   └── models/      # TypeScript interfaces
-│   │   └── styles.scss
+│   │   └── styles.scss      # Bootstrap import
 │   └── angular.json
 ├── server/                 # Express backend
 │   ├── index.ts           # Server entry point
@@ -58,13 +58,14 @@ A complete project and resource management system with invoicing capabilities. B
 
 ### Invoice Generation
 - Generate invoices by client, project, and date range
-- Automatic calculation of totals based on billing type
+- Server-side calculation of totals based on billing type
 - PDF export with invoice details
 - Invoice status management (draft, sent, paid, overdue)
 
-## Billing Calculations
+## Billing Calculations (Server-Side)
 - **Hourly**: hours × rate
 - **Monthly**: (monthly_rate / 22 working days) × days worked
+  - Invoice line items show daily rate for clarity
 
 ## Running the Application
 The development server runs both backend (port 3000) and frontend (port 5000).
@@ -85,4 +86,8 @@ npm run db:studio  # Open Drizzle Studio
 - `GET/POST /api/projects` - Project operations
 - `GET/POST /api/time-entries` - Time entry operations
 - `GET/POST /api/invoices` - Invoice operations
-- `POST /api/invoices/generate` - Generate new invoice
+- `POST /api/invoices/generate` - Generate new invoice (server-side calculations)
+
+## UI Components
+- **PrimeNG**: DataTables with sorting, pagination, and filtering
+- **Bootstrap 5**: Layout, cards, badges, buttons, and utility classes

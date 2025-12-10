@@ -27,95 +27,97 @@ import { Project, Client, TeamMember } from '../../models/models';
   ],
   providers: [ConfirmationService, MessageService],
   template: `
-    <div class="container">
-      <div class="page-header">
-        <h2>Projects</h2>
+    <div class="container-fluid p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Projects</h2>
         <p-button icon="pi pi-plus" label="Add Project" (onClick)="openDialog()"></p-button>
       </div>
       
-      <div class="card">
-        <p-table [value]="projects" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
-                 [rowsPerPageOptions]="[5,10,25,50]" dataKey="id" [loading]="loading"
-                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} projects">
-          <ng-template pTemplate="header">
-            <tr>
-              <th pSortableColumn="projectName">Project Name <p-sortIcon field="projectName"></p-sortIcon></th>
-              <th>Client</th>
-              <th>Team Members</th>
-              <th pSortableColumn="startDate">Start Date <p-sortIcon field="startDate"></p-sortIcon></th>
-              <th>End Date</th>
-              <th>Status</th>
-              <th style="width: 150px">Actions</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-project>
-            <tr>
-              <td>{{ project.projectName }}</td>
-              <td>{{ project.client?.clientName || '-' }}</td>
-              <td>
-                <span *ngFor="let a of project.projectAssignments; let last = last">
-                  {{ a.teamMember?.name }}{{ !last ? ', ' : '' }}
-                </span>
-                <span *ngIf="!project.projectAssignments?.length">-</span>
-              </td>
-              <td>{{ project.startDate | date:'mediumDate' }}</td>
-              <td>{{ project.endDate ? (project.endDate | date:'mediumDate') : '-' }}</td>
-              <td>
-                <span class="status-badge" [class]="project.status">{{ formatStatus(project.status) }}</span>
-              </td>
-              <td>
-                <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="editProject(project)"></p-button>
-                <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(project)"></p-button>
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="7" class="text-center">No projects found. Click "Add Project" to create one.</td>
-            </tr>
-          </ng-template>
-        </p-table>
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <p-table [value]="projects" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+                   [rowsPerPageOptions]="[5,10,25,50]" dataKey="id" [loading]="loading"
+                   currentPageReportTemplate="Showing {first} to {last} of {totalRecords} projects">
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="projectName">Project Name <p-sortIcon field="projectName"></p-sortIcon></th>
+                <th>Client</th>
+                <th>Team Members</th>
+                <th pSortableColumn="startDate">Start Date <p-sortIcon field="startDate"></p-sortIcon></th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th style="width: 150px">Actions</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-project>
+              <tr>
+                <td>{{ project.projectName }}</td>
+                <td>{{ project.client?.clientName || '-' }}</td>
+                <td>
+                  <span *ngFor="let a of project.projectAssignments; let last = last">
+                    {{ a.teamMember?.name }}{{ !last ? ', ' : '' }}
+                  </span>
+                  <span *ngIf="!project.projectAssignments?.length">-</span>
+                </td>
+                <td>{{ project.startDate | date:'mediumDate' }}</td>
+                <td>{{ project.endDate ? (project.endDate | date:'mediumDate') : '-' }}</td>
+                <td>
+                  <span class="badge" [ngClass]="getStatusClass(project.status)">{{ formatStatus(project.status) }}</span>
+                </td>
+                <td>
+                  <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="editProject(project)"></p-button>
+                  <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(project)"></p-button>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="7" class="text-center text-muted py-4">No projects found. Click "Add Project" to create one.</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
       </div>
       
       <p-dialog [(visible)]="dialogVisible" [header]="editMode ? 'Edit Project' : 'Add Project'" [modal]="true" [style]="{width: '600px'}">
-        <div class="form-field">
-          <label for="projectName">Project Name *</label>
-          <input pInputText id="projectName" [(ngModel)]="currentProject.projectName" class="w-full" required />
+        <div class="mb-3">
+          <label for="projectName" class="form-label fw-semibold">Project Name *</label>
+          <input pInputText id="projectName" [(ngModel)]="currentProject.projectName" class="w-100" required />
         </div>
-        <div class="form-field">
-          <label for="client">Client *</label>
+        <div class="mb-3">
+          <label for="client" class="form-label fw-semibold">Client *</label>
           <p-select id="client" [(ngModel)]="currentProject.clientId" [options]="clientOptions" 
-                    optionLabel="label" optionValue="value" placeholder="Select client" class="w-full"></p-select>
+                    optionLabel="label" optionValue="value" placeholder="Select client" class="w-100"></p-select>
         </div>
-        <div class="form-field">
-          <label for="description">Description</label>
-          <textarea pTextarea id="description" [(ngModel)]="currentProject.description" class="w-full" rows="3"></textarea>
+        <div class="mb-3">
+          <label for="description" class="form-label fw-semibold">Description</label>
+          <textarea pTextarea id="description" [(ngModel)]="currentProject.description" class="w-100" rows="3"></textarea>
         </div>
-        <div class="grid">
+        <div class="row">
           <div class="col-6">
-            <div class="form-field">
-              <label for="startDate">Start Date *</label>
-              <p-datepicker id="startDate" [(ngModel)]="startDateObj" dateFormat="yy-mm-dd" class="w-full"></p-datepicker>
+            <div class="mb-3">
+              <label for="startDate" class="form-label fw-semibold">Start Date *</label>
+              <p-datepicker id="startDate" [(ngModel)]="startDateObj" dateFormat="yy-mm-dd" class="w-100"></p-datepicker>
             </div>
           </div>
           <div class="col-6">
-            <div class="form-field">
-              <label for="endDate">End Date</label>
-              <p-datepicker id="endDate" [(ngModel)]="endDateObj" dateFormat="yy-mm-dd" class="w-full"></p-datepicker>
+            <div class="mb-3">
+              <label for="endDate" class="form-label fw-semibold">End Date</label>
+              <p-datepicker id="endDate" [(ngModel)]="endDateObj" dateFormat="yy-mm-dd" class="w-100"></p-datepicker>
             </div>
           </div>
         </div>
-        <div class="form-field">
-          <label for="status">Status *</label>
+        <div class="mb-3">
+          <label for="status" class="form-label fw-semibold">Status *</label>
           <p-select id="status" [(ngModel)]="currentProject.status" [options]="statusOptions" 
-                    optionLabel="label" optionValue="value" placeholder="Select status" class="w-full"></p-select>
+                    optionLabel="label" optionValue="value" placeholder="Select status" class="w-100"></p-select>
         </div>
-        <div class="form-field">
-          <label for="teamMembers">Assign Team Members</label>
+        <div class="mb-3">
+          <label for="teamMembers" class="form-label fw-semibold">Assign Team Members</label>
           <p-multiSelect id="teamMembers" [(ngModel)]="selectedTeamMemberIds" [options]="teamMemberOptions"
-                         optionLabel="label" optionValue="value" placeholder="Select team members" class="w-full"></p-multiSelect>
+                         optionLabel="label" optionValue="value" placeholder="Select team members" class="w-100"></p-multiSelect>
         </div>
-        <div class="dialog-footer">
+        <div class="d-flex justify-content-end gap-2 mt-4">
           <p-button label="Cancel" [text]="true" (onClick)="dialogVisible = false"></p-button>
           <p-button label="Save" (onClick)="saveProject()" [disabled]="!isValid()"></p-button>
         </div>
@@ -189,6 +191,17 @@ export class ProjectsComponent implements OnInit {
 
   formatStatus(status: string): string {
     return status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  getStatusClass(status: string): string {
+    const classes: Record<string, string> = {
+      'pending': 'bg-warning text-dark',
+      'in_progress': 'bg-info text-dark',
+      'completed': 'bg-success',
+      'on_hold': 'bg-secondary',
+      'cancelled': 'bg-danger'
+    };
+    return classes[status] || 'bg-secondary';
   }
 
   openDialog() {

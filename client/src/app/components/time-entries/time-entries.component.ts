@@ -25,107 +25,111 @@ import { TimeEntry, Project, TeamMember } from '../../models/models';
   ],
   providers: [ConfirmationService, MessageService],
   template: `
-    <div class="container">
-      <div class="page-header">
-        <h2>Time Tracking</h2>
+    <div class="container-fluid p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Time Tracking</h2>
         <p-button icon="pi pi-plus" label="Add Time Entry" (onClick)="openDialog()"></p-button>
       </div>
       
-      <div class="card" style="margin-bottom: 1rem;">
-        <div class="grid">
-          <div class="col-3">
-            <label>Filter by Project</label>
-            <p-select [(ngModel)]="filterProjectId" [options]="projectOptions" 
-                      optionLabel="label" optionValue="value" placeholder="All Projects" 
-                      [showClear]="true" class="w-full" (onChange)="loadEntries()"></p-select>
-          </div>
-          <div class="col-3">
-            <label>Filter by Team Member</label>
-            <p-select [(ngModel)]="filterTeamMemberId" [options]="teamMemberOptions" 
-                      optionLabel="label" optionValue="value" placeholder="All Members" 
-                      [showClear]="true" class="w-full" (onChange)="loadEntries()"></p-select>
-          </div>
-          <div class="col-3">
-            <label>From Date</label>
-            <p-datepicker [(ngModel)]="filterDateFrom" dateFormat="yy-mm-dd" 
-                          class="w-full" (onSelect)="loadEntries()" [showClear]="true"></p-datepicker>
-          </div>
-          <div class="col-3">
-            <label>To Date</label>
-            <p-datepicker [(ngModel)]="filterDateTo" dateFormat="yy-mm-dd" 
-                          class="w-full" (onSelect)="loadEntries()" [showClear]="true"></p-datepicker>
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">Filter by Project</label>
+              <p-select [(ngModel)]="filterProjectId" [options]="projectOptions" 
+                        optionLabel="label" optionValue="value" placeholder="All Projects" 
+                        [showClear]="true" class="w-100" (onChange)="loadEntries()"></p-select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">Filter by Team Member</label>
+              <p-select [(ngModel)]="filterTeamMemberId" [options]="teamMemberOptions" 
+                        optionLabel="label" optionValue="value" placeholder="All Members" 
+                        [showClear]="true" class="w-100" (onChange)="loadEntries()"></p-select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">From Date</label>
+              <p-datepicker [(ngModel)]="filterDateFrom" dateFormat="yy-mm-dd" 
+                            class="w-100" (onSelect)="loadEntries()" [showClear]="true"></p-datepicker>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">To Date</label>
+              <p-datepicker [(ngModel)]="filterDateTo" dateFormat="yy-mm-dd" 
+                            class="w-100" (onSelect)="loadEntries()" [showClear]="true"></p-datepicker>
+            </div>
           </div>
         </div>
       </div>
       
-      <div class="card">
-        <p-table [value]="timeEntries" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
-                 [rowsPerPageOptions]="[5,10,25,50]" dataKey="id" [loading]="loading"
-                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
-          <ng-template pTemplate="header">
-            <tr>
-              <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon></th>
-              <th>Project</th>
-              <th>Team Member</th>
-              <th pSortableColumn="hours">Hours <p-sortIcon field="hours"></p-sortIcon></th>
-              <th>Amount</th>
-              <th>Description</th>
-              <th style="width: 150px">Actions</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-entry>
-            <tr>
-              <td>{{ entry.date | date:'mediumDate' }}</td>
-              <td>{{ entry.project?.projectName || '-' }}</td>
-              <td>
-                {{ entry.teamMember?.name || '-' }}
-                <span *ngIf="entry.teamMember" class="billing-type-badge ml-2" [class]="entry.teamMember.billingType">
-                  {{ entry.teamMember.billingType === 'hourly' ? 'H' : 'M' }}
-                </span>
-              </td>
-              <td>{{ entry.hours }}</td>
-              <td>\${{ calculateAmount(entry) | number:'1.2-2' }}</td>
-              <td>{{ entry.description || '-' }}</td>
-              <td>
-                <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="editEntry(entry)"></p-button>
-                <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(entry)"></p-button>
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="7" class="text-center">No time entries found. Click "Add Time Entry" to create one.</td>
-            </tr>
-          </ng-template>
-        </p-table>
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <p-table [value]="timeEntries" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+                   [rowsPerPageOptions]="[5,10,25,50]" dataKey="id" [loading]="loading"
+                   currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon></th>
+                <th>Project</th>
+                <th>Team Member</th>
+                <th pSortableColumn="hours">Hours <p-sortIcon field="hours"></p-sortIcon></th>
+                <th>Amount</th>
+                <th>Description</th>
+                <th style="width: 150px">Actions</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-entry>
+              <tr>
+                <td>{{ entry.date | date:'mediumDate' }}</td>
+                <td>{{ entry.project?.projectName || '-' }}</td>
+                <td>
+                  {{ entry.teamMember?.name || '-' }}
+                  <span *ngIf="entry.teamMember" class="badge ms-2" [ngClass]="entry.teamMember.billingType === 'hourly' ? 'bg-primary' : 'bg-info'">
+                    {{ entry.teamMember.billingType === 'hourly' ? 'H' : 'M' }}
+                  </span>
+                </td>
+                <td>{{ entry.hours }}</td>
+                <td>\${{ calculateAmount(entry) | number:'1.2-2' }}</td>
+                <td>{{ entry.description || '-' }}</td>
+                <td>
+                  <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="editEntry(entry)"></p-button>
+                  <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(entry)"></p-button>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="7" class="text-center text-muted py-4">No time entries found. Click "Add Time Entry" to create one.</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
       </div>
       
       <p-dialog [(visible)]="dialogVisible" [header]="editMode ? 'Edit Time Entry' : 'Add Time Entry'" [modal]="true" [style]="{width: '500px'}">
-        <div class="form-field">
-          <label for="project">Project *</label>
+        <div class="mb-3">
+          <label for="project" class="form-label fw-semibold">Project *</label>
           <p-select id="project" [(ngModel)]="currentEntry.projectId" [options]="projectOptions" 
                     optionLabel="label" optionValue="value" placeholder="Select project" 
-                    class="w-full" (onChange)="onProjectChange()"></p-select>
+                    class="w-100" (onChange)="onProjectChange()"></p-select>
         </div>
-        <div class="form-field">
-          <label for="teamMember">Team Member *</label>
+        <div class="mb-3">
+          <label for="teamMember" class="form-label fw-semibold">Team Member *</label>
           <p-select id="teamMember" [(ngModel)]="currentEntry.teamMemberId" [options]="assignedMemberOptions" 
-                    optionLabel="label" optionValue="value" placeholder="Select team member" class="w-full"></p-select>
+                    optionLabel="label" optionValue="value" placeholder="Select team member" class="w-100"></p-select>
         </div>
-        <div class="form-field">
-          <label for="date">Date *</label>
-          <p-datepicker id="date" [(ngModel)]="entryDateObj" dateFormat="yy-mm-dd" class="w-full"></p-datepicker>
+        <div class="mb-3">
+          <label for="date" class="form-label fw-semibold">Date *</label>
+          <p-datepicker id="date" [(ngModel)]="entryDateObj" dateFormat="yy-mm-dd" class="w-100"></p-datepicker>
         </div>
-        <div class="form-field">
-          <label for="hours">Hours *</label>
+        <div class="mb-3">
+          <label for="hours" class="form-label fw-semibold">Hours *</label>
           <p-inputNumber id="hours" [(ngModel)]="currentEntry.hours" [minFractionDigits]="1" [maxFractionDigits]="2" 
-                         [min]="0.1" [max]="24" class="w-full"></p-inputNumber>
+                         [min]="0.1" [max]="24" class="w-100"></p-inputNumber>
         </div>
-        <div class="form-field">
-          <label for="description">Description</label>
-          <textarea pTextarea id="description" [(ngModel)]="currentEntry.description" class="w-full" rows="3"></textarea>
+        <div class="mb-3">
+          <label for="description" class="form-label fw-semibold">Description</label>
+          <textarea pTextarea id="description" [(ngModel)]="currentEntry.description" class="w-100" rows="3"></textarea>
         </div>
-        <div class="dialog-footer">
+        <div class="d-flex justify-content-end gap-2 mt-4">
           <p-button label="Cancel" [text]="true" (onClick)="dialogVisible = false"></p-button>
           <p-button label="Save" (onClick)="saveEntry()" [disabled]="!isValid()"></p-button>
         </div>

@@ -24,110 +24,112 @@ import autoTable from 'jspdf-autotable';
   ],
   providers: [ConfirmationService, MessageService],
   template: `
-    <div class="container">
-      <div class="page-header">
-        <h2>Invoices</h2>
+    <div class="container-fluid p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Invoices</h2>
         <p-button icon="pi pi-plus" label="Generate Invoice" (onClick)="openGenerateDialog()"></p-button>
       </div>
       
-      <div class="card">
-        <p-table [value]="invoices" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
-                 [rowsPerPageOptions]="[5,10,25,50]" dataKey="id" [loading]="loading"
-                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} invoices">
-          <ng-template pTemplate="header">
-            <tr>
-              <th pSortableColumn="invoiceNumber">Invoice # <p-sortIcon field="invoiceNumber"></p-sortIcon></th>
-              <th>Client</th>
-              <th>Project</th>
-              <th>Period</th>
-              <th pSortableColumn="total">Total <p-sortIcon field="total"></p-sortIcon></th>
-              <th>Status</th>
-              <th pSortableColumn="createdAt">Created <p-sortIcon field="createdAt"></p-sortIcon></th>
-              <th style="width: 200px">Actions</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-invoice>
-            <tr>
-              <td>{{ invoice.invoiceNumber }}</td>
-              <td>{{ invoice.client?.clientName || '-' }}</td>
-              <td>{{ invoice.project?.projectName || 'All Projects' }}</td>
-              <td>{{ invoice.dateFrom | date:'mediumDate' }} - {{ invoice.dateTo | date:'mediumDate' }}</td>
-              <td>\${{ invoice.total | number:'1.2-2' }}</td>
-              <td>
-                <span class="status-badge" [class]="invoice.status">{{ formatStatus(invoice.status) }}</span>
-              </td>
-              <td>{{ invoice.createdAt | date:'mediumDate' }}</td>
-              <td>
-                <p-button icon="pi pi-eye" [rounded]="true" [text]="true" (onClick)="viewInvoice(invoice)" pTooltip="View"></p-button>
-                <p-button icon="pi pi-download" [rounded]="true" [text]="true" (onClick)="downloadPdf(invoice)" pTooltip="Download PDF"></p-button>
-                <p-button icon="pi pi-check" [rounded]="true" [text]="true" severity="success" (onClick)="markAsPaid(invoice)" 
-                          *ngIf="invoice.status !== 'paid'" pTooltip="Mark as Paid"></p-button>
-                <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(invoice)" pTooltip="Delete"></p-button>
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="8" class="text-center">No invoices found. Click "Generate Invoice" to create one.</td>
-            </tr>
-          </ng-template>
-        </p-table>
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <p-table [value]="invoices" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+                   [rowsPerPageOptions]="[5,10,25,50]" dataKey="id" [loading]="loading"
+                   currentPageReportTemplate="Showing {first} to {last} of {totalRecords} invoices">
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="invoiceNumber">Invoice # <p-sortIcon field="invoiceNumber"></p-sortIcon></th>
+                <th>Client</th>
+                <th>Project</th>
+                <th>Period</th>
+                <th pSortableColumn="total">Total <p-sortIcon field="total"></p-sortIcon></th>
+                <th>Status</th>
+                <th pSortableColumn="createdAt">Created <p-sortIcon field="createdAt"></p-sortIcon></th>
+                <th style="width: 200px">Actions</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-invoice>
+              <tr>
+                <td>{{ invoice.invoiceNumber }}</td>
+                <td>{{ invoice.client?.clientName || '-' }}</td>
+                <td>{{ invoice.project?.projectName || 'All Projects' }}</td>
+                <td>{{ invoice.dateFrom | date:'mediumDate' }} - {{ invoice.dateTo | date:'mediumDate' }}</td>
+                <td>\${{ invoice.total | number:'1.2-2' }}</td>
+                <td>
+                  <span class="badge" [ngClass]="getStatusClass(invoice.status)">{{ formatStatus(invoice.status) }}</span>
+                </td>
+                <td>{{ invoice.createdAt | date:'mediumDate' }}</td>
+                <td>
+                  <p-button icon="pi pi-eye" [rounded]="true" [text]="true" (onClick)="viewInvoice(invoice)" pTooltip="View"></p-button>
+                  <p-button icon="pi pi-download" [rounded]="true" [text]="true" (onClick)="downloadPdf(invoice)" pTooltip="Download PDF"></p-button>
+                  <p-button icon="pi pi-check" [rounded]="true" [text]="true" severity="success" (onClick)="markAsPaid(invoice)" 
+                            *ngIf="invoice.status !== 'paid'" pTooltip="Mark as Paid"></p-button>
+                  <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(invoice)" pTooltip="Delete"></p-button>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="8" class="text-center text-muted py-4">No invoices found. Click "Generate Invoice" to create one.</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
       </div>
       
       <p-dialog [(visible)]="generateDialogVisible" header="Generate Invoice" [modal]="true" [style]="{width: '500px'}">
-        <div class="form-field">
-          <label for="client">Client *</label>
+        <div class="mb-3">
+          <label for="client" class="form-label fw-semibold">Client *</label>
           <p-select id="client" [(ngModel)]="generateData.clientId" [options]="clientOptions" 
                     optionLabel="label" optionValue="value" placeholder="Select client" 
-                    class="w-full" (onChange)="onClientChange()"></p-select>
+                    class="w-100" (onChange)="onClientChange()"></p-select>
         </div>
-        <div class="form-field">
-          <label for="project">Project (optional)</label>
+        <div class="mb-3">
+          <label for="project" class="form-label fw-semibold">Project (optional)</label>
           <p-select id="project" [(ngModel)]="generateData.projectId" [options]="clientProjectOptions" 
                     optionLabel="label" optionValue="value" placeholder="All projects for this client" 
-                    [showClear]="true" class="w-full"></p-select>
+                    [showClear]="true" class="w-100"></p-select>
         </div>
-        <div class="grid">
+        <div class="row">
           <div class="col-6">
-            <div class="form-field">
-              <label for="dateFrom">From Date *</label>
-              <p-datepicker id="dateFrom" [(ngModel)]="dateFromObj" dateFormat="yy-mm-dd" class="w-full"></p-datepicker>
+            <div class="mb-3">
+              <label for="dateFrom" class="form-label fw-semibold">From Date *</label>
+              <p-datepicker id="dateFrom" [(ngModel)]="dateFromObj" dateFormat="yy-mm-dd" class="w-100"></p-datepicker>
             </div>
           </div>
           <div class="col-6">
-            <div class="form-field">
-              <label for="dateTo">To Date *</label>
-              <p-datepicker id="dateTo" [(ngModel)]="dateToObj" dateFormat="yy-mm-dd" class="w-full"></p-datepicker>
+            <div class="mb-3">
+              <label for="dateTo" class="form-label fw-semibold">To Date *</label>
+              <p-datepicker id="dateTo" [(ngModel)]="dateToObj" dateFormat="yy-mm-dd" class="w-100"></p-datepicker>
             </div>
           </div>
         </div>
-        <div class="dialog-footer">
+        <div class="d-flex justify-content-end gap-2 mt-4">
           <p-button label="Cancel" [text]="true" (onClick)="generateDialogVisible = false"></p-button>
           <p-button label="Generate" (onClick)="generateInvoice()" [disabled]="!isGenerateValid()"></p-button>
         </div>
       </p-dialog>
       
       <p-dialog [(visible)]="viewDialogVisible" [header]="'Invoice ' + (selectedInvoice?.invoiceNumber || '')" [modal]="true" [style]="{width: '700px'}">
-        <div *ngIf="selectedInvoice" class="invoice-preview">
-          <div class="invoice-header">
+        <div *ngIf="selectedInvoice" class="p-3">
+          <div class="d-flex justify-content-between mb-4 pb-3 border-bottom">
             <div>
-              <h3>Invoice</h3>
-              <p><strong>Invoice #:</strong> {{ selectedInvoice.invoiceNumber }}</p>
-              <p><strong>Date:</strong> {{ selectedInvoice.createdAt | date:'mediumDate' }}</p>
+              <h3 class="mb-2">Invoice</h3>
+              <p class="mb-1"><strong>Invoice #:</strong> {{ selectedInvoice.invoiceNumber }}</p>
+              <p class="mb-0"><strong>Date:</strong> {{ selectedInvoice.createdAt | date:'mediumDate' }}</p>
             </div>
-            <div class="text-right">
-              <p><strong>Bill To:</strong></p>
-              <p>{{ selectedInvoice.client?.clientName }}</p>
-              <p>{{ selectedInvoice.client?.email }}</p>
-              <p>{{ selectedInvoice.client?.address || '' }}</p>
+            <div class="text-end">
+              <p class="mb-1"><strong>Bill To:</strong></p>
+              <p class="mb-1">{{ selectedInvoice.client?.clientName }}</p>
+              <p class="mb-1">{{ selectedInvoice.client?.email }}</p>
+              <p class="mb-0">{{ selectedInvoice.client?.address || '' }}</p>
             </div>
           </div>
           
-          <p><strong>Period:</strong> {{ selectedInvoice.dateFrom | date:'mediumDate' }} - {{ selectedInvoice.dateTo | date:'mediumDate' }}</p>
-          <p *ngIf="selectedInvoice.project"><strong>Project:</strong> {{ selectedInvoice.project.projectName }}</p>
+          <p class="mb-2"><strong>Period:</strong> {{ selectedInvoice.dateFrom | date:'mediumDate' }} - {{ selectedInvoice.dateTo | date:'mediumDate' }}</p>
+          <p *ngIf="selectedInvoice.project" class="mb-3"><strong>Project:</strong> {{ selectedInvoice.project.projectName }}</p>
           
-          <table class="invoice-table">
-            <thead>
+          <table class="table table-striped">
+            <thead class="table-dark">
               <tr>
                 <th>Description</th>
                 <th>Quantity</th>
@@ -145,21 +147,21 @@ import autoTable from 'jspdf-autotable';
             </tbody>
             <tfoot>
               <tr>
-                <td colspan="3" class="text-right"><strong>Subtotal:</strong></td>
+                <td colspan="3" class="text-end fw-semibold">Subtotal:</td>
                 <td>\${{ selectedInvoice.subtotal | number:'1.2-2' }}</td>
               </tr>
               <tr>
-                <td colspan="3" class="text-right"><strong>Tax:</strong></td>
+                <td colspan="3" class="text-end fw-semibold">Tax:</td>
                 <td>\${{ selectedInvoice.tax | number:'1.2-2' }}</td>
               </tr>
-              <tr>
-                <td colspan="3" class="text-right"><strong>Total:</strong></td>
-                <td><strong>\${{ selectedInvoice.total | number:'1.2-2' }}</strong></td>
+              <tr class="table-dark">
+                <td colspan="3" class="text-end fw-bold">Total:</td>
+                <td class="fw-bold">\${{ selectedInvoice.total | number:'1.2-2' }}</td>
               </tr>
             </tfoot>
           </table>
         </div>
-        <div class="dialog-footer">
+        <div class="d-flex justify-content-end gap-2 mt-4">
           <p-button label="Close" [text]="true" (onClick)="viewDialogVisible = false"></p-button>
           <p-button label="Download PDF" icon="pi pi-download" (onClick)="downloadPdf(selectedInvoice!)"></p-button>
         </div>
@@ -168,41 +170,7 @@ import autoTable from 'jspdf-autotable';
       <p-confirmDialog></p-confirmDialog>
       <p-toast></p-toast>
     </div>
-  `,
-  styles: [`
-    .invoice-preview {
-      padding: 1rem;
-    }
-    .invoice-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 2rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid #ddd;
-    }
-    .invoice-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-      
-      th, td {
-        padding: 0.75rem;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-      }
-      th {
-        background: #f8f9fa;
-        font-weight: 600;
-      }
-      tfoot td {
-        border-bottom: none;
-        padding: 0.5rem 0.75rem;
-      }
-    }
-    .text-right {
-      text-align: right;
-    }
-  `]
+  `
 })
 export class InvoicesComponent implements OnInit {
   invoices: Invoice[] = [];
@@ -260,6 +228,16 @@ export class InvoicesComponent implements OnInit {
 
   formatStatus(status: string): string {
     return status.charAt(0).toUpperCase() + status.slice(1);
+  }
+
+  getStatusClass(status: string): string {
+    const classes: Record<string, string> = {
+      'draft': 'bg-secondary',
+      'sent': 'bg-info text-dark',
+      'paid': 'bg-success',
+      'overdue': 'bg-danger'
+    };
+    return classes[status] || 'bg-secondary';
   }
 
   openGenerateDialog() {

@@ -7,29 +7,29 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
-    <div class="sidebar">
-      <div class="logo">
-        <i class="pi pi-briefcase"></i>
-        <span>Project Manager</span>
+    <div class="d-flex flex-column vh-100 bg-dark text-white position-fixed" style="width: 250px;">
+      <div class="d-flex align-items-center gap-2 p-3 border-bottom border-secondary">
+        <i class="pi pi-briefcase fs-4"></i>
+        <span class="fw-semibold fs-5">Project Manager</span>
       </div>
-      <nav>
-        <a routerLink="/clients" routerLinkActive="active">
+      <nav class="nav flex-column mt-2">
+        <a routerLink="/clients" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-white-50 py-3 px-3">
           <i class="pi pi-users"></i>
           <span>Clients</span>
         </a>
-        <a routerLink="/team-members" routerLinkActive="active">
+        <a routerLink="/team-members" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-white-50 py-3 px-3">
           <i class="pi pi-user"></i>
           <span>Team Members</span>
         </a>
-        <a routerLink="/projects" routerLinkActive="active">
+        <a routerLink="/projects" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-white-50 py-3 px-3">
           <i class="pi pi-folder"></i>
           <span>Projects</span>
         </a>
-        <a routerLink="/time-entries" routerLinkActive="active">
+        <a routerLink="/time-entries" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-white-50 py-3 px-3">
           <i class="pi pi-clock"></i>
           <span>Time Tracking</span>
         </a>
-        <a routerLink="/invoices" routerLinkActive="active">
+        <a routerLink="/invoices" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-white-50 py-3 px-3">
           <i class="pi pi-file"></i>
           <span>Invoices</span>
         </a>
@@ -37,62 +37,14 @@ import { RouterModule } from '@angular/router';
     </div>
   `,
   styles: [`
-    .sidebar {
-      width: 250px;
-      height: 100vh;
-      background: linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%);
-      position: fixed;
-      left: 0;
-      top: 0;
-      padding: 1rem 0;
-      display: flex;
-      flex-direction: column;
+    .nav-link:hover {
+      background: rgba(255,255,255,0.1);
+      color: white !important;
     }
-    
-    .logo {
-      padding: 1rem 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      color: white;
-      font-size: 1.25rem;
-      font-weight: 600;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 1rem;
-      
-      i {
-        font-size: 1.5rem;
-      }
-    }
-    
-    nav {
-      display: flex;
-      flex-direction: column;
-      
-      a {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.875rem 1.5rem;
-        color: rgba(255,255,255,0.7);
-        text-decoration: none;
-        transition: all 0.2s;
-        
-        i {
-          font-size: 1.1rem;
-        }
-        
-        &:hover {
-          background: rgba(255,255,255,0.1);
-          color: white;
-        }
-        
-        &.active {
-          background: rgba(255,255,255,0.15);
-          color: white;
-          border-left: 3px solid #4dabf7;
-        }
-      }
+    .nav-link.active {
+      background: rgba(255,255,255,0.15);
+      color: white !important;
+      border-left: 3px solid #0d6efd;
     }
   `]
 })

@@ -8,20 +8,9 @@ import { SidebarComponent } from './components/layout/sidebar.component';
   imports: [RouterOutlet, SidebarComponent],
   template: `
     <app-sidebar></app-sidebar>
-    <div class="main-content">
+    <div class="main-content bg-light min-vh-100 p-3" style="margin-left: 250px;">
       <router-outlet></router-outlet>
     </div>
-  `,
-  styles: [`
-    :host {
-      display: block;
-    }
-    .main-content {
-      margin-left: 250px;
-      padding: 1rem;
-      min-height: 100vh;
-      background: #f8f9fa;
-    }
-  `]
+  `
 })
 export class App {}

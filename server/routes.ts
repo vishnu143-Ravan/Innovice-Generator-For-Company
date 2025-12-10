@@ -352,20 +352,26 @@ router.post("/invoices/generate", async (req, res) => {
         quantity = data.totalHours;
         amount = quantity * rate;
         description = `${data.teamMember.name} - ${data.teamMember.role} (Hourly @ $${rate}/hr)`;
+        lineItemsData.push({
+          description,
+          quantity: Math.round(quantity * 100) / 100,
+          rate,
+          amount: Math.round(amount * 100) / 100,
+        });
       } else {
         const daysWorked = data.totalHours / 8;
         const workingDaysInMonth = 22;
+        const dailyRate = rate / workingDaysInMonth;
         quantity = daysWorked;
-        amount = (rate / workingDaysInMonth) * daysWorked;
-        description = `${data.teamMember.name} - ${data.teamMember.role} (Monthly, prorated)`;
+        amount = dailyRate * daysWorked;
+        description = `${data.teamMember.name} - ${data.teamMember.role} (Daily @ $${dailyRate.toFixed(2)}/day)`;
+        lineItemsData.push({
+          description,
+          quantity: Math.round(quantity * 100) / 100,
+          rate: Math.round(dailyRate * 100) / 100,
+          amount: Math.round(amount * 100) / 100,
+        });
       }
-      
-      lineItemsData.push({
-        description,
-        quantity: Math.round(quantity * 100) / 100,
-        rate,
-        amount: Math.round(amount * 100) / 100,
-      });
       subtotal += amount;
     }
     
