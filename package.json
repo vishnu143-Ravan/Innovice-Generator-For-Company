@@ -1,0 +1,32 @@
+{
+  "name": "project-resource-management",
+  "version": "1.0.0",
+  "description": "Project and Resource Management System with Invoicing",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "tsx watch server/index.ts",
+    "client": "cd client && ng serve --host 0.0.0.0 --port 5000",
+    "build": "cd client && ng build --configuration production",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "drizzle-orm": "^0.33.0",
+    "express": "^4.21.0",
+    "pg": "^8.13.0",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.5.5",
+    "@types/pg": "^8.11.10",
+    "concurrently": "^9.0.1",
+    "drizzle-kit": "^0.24.2",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2"
+  }
+}
