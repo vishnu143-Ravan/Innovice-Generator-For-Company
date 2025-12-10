@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
@@ -103,9 +103,9 @@ import { TeamMember } from '../../models/models';
     </div>
   `
 })
-export class TeamMembersComponent implements AfterViewInit {
+export class TeamMembersComponent implements OnInit {
   teamMembers: TeamMember[] = [];
-  loading = true;
+  loading = false;
   dialogVisible = false;
   editMode = false;
   currentMember: any = {};
@@ -118,23 +118,27 @@ export class TeamMembersComponent implements AfterViewInit {
   constructor(
     private api: ApiService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  ngAfterViewInit() {
-    setTimeout(() => this.loadMembers(), 0);
+  ngOnInit() {
+    this.loadMembers();
   }
 
   loadMembers() {
     this.loading = true;
+    this.cdr.detectChanges();
     this.api.getTeamMembers().subscribe({
       next: (data) => {
         this.teamMembers = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load team members' });
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

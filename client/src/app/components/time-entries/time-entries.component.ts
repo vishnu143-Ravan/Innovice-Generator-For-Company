@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
@@ -140,11 +140,11 @@ import { TimeEntry, Project, TeamMember } from '../../models/models';
     </div>
   `
 })
-export class TimeEntriesComponent implements AfterViewInit {
+export class TimeEntriesComponent implements OnInit {
   timeEntries: TimeEntry[] = [];
   projects: Project[] = [];
   teamMembers: TeamMember[] = [];
-  loading = true;
+  loading = false;
   dialogVisible = false;
   editMode = false;
   currentEntry: any = {};
@@ -162,11 +162,12 @@ export class TimeEntriesComponent implements AfterViewInit {
   constructor(
     private api: ApiService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  ngAfterViewInit() {
-    setTimeout(() => this.loadData(), 0);
+  ngOnInit() {
+    this.loadData();
   }
 
   loadData() {
@@ -189,6 +190,7 @@ export class TimeEntriesComponent implements AfterViewInit {
 
   loadEntries() {
     this.loading = true;
+    this.cdr.detectChanges();
     const filters: any = {};
     if (this.filterProjectId) filters.projectId = this.filterProjectId;
     if (this.filterTeamMemberId) filters.teamMemberId = this.filterTeamMemberId;
@@ -199,10 +201,12 @@ export class TimeEntriesComponent implements AfterViewInit {
       next: (data) => {
         this.timeEntries = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load time entries' });
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

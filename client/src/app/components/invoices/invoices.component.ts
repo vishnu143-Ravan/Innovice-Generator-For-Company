@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
@@ -172,11 +172,11 @@ import autoTable from 'jspdf-autotable';
     </div>
   `
 })
-export class InvoicesComponent implements AfterViewInit {
+export class InvoicesComponent implements OnInit {
   invoices: Invoice[] = [];
   clients: Client[] = [];
   projects: Project[] = [];
-  loading = true;
+  loading = false;
   
   generateDialogVisible = false;
   viewDialogVisible = false;
@@ -192,23 +192,27 @@ export class InvoicesComponent implements AfterViewInit {
   constructor(
     private api: ApiService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  ngAfterViewInit() {
-    setTimeout(() => this.loadData(), 0);
+  ngOnInit() {
+    this.loadData();
   }
 
   loadData() {
     this.loading = true;
+    this.cdr.detectChanges();
     this.api.getInvoices().subscribe({
       next: (data) => {
         this.invoices = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load invoices' });
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
     

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
@@ -128,11 +128,11 @@ import { Project, Client, TeamMember } from '../../models/models';
     </div>
   `
 })
-export class ProjectsComponent implements AfterViewInit {
+export class ProjectsComponent implements OnInit {
   projects: Project[] = [];
   clients: Client[] = [];
   teamMembers: TeamMember[] = [];
-  loading = true;
+  loading = false;
   dialogVisible = false;
   editMode = false;
   currentProject: any = {};
@@ -154,23 +154,27 @@ export class ProjectsComponent implements AfterViewInit {
   constructor(
     private api: ApiService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  ngAfterViewInit() {
-    setTimeout(() => this.loadData(), 0);
+  ngOnInit() {
+    this.loadData();
   }
 
   loadData() {
     this.loading = true;
+    this.cdr.detectChanges();
     this.api.getProjects().subscribe({
       next: (data) => {
         this.projects = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load projects' });
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
     

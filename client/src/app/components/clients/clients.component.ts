@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
@@ -91,9 +91,9 @@ import { Client } from '../../models/models';
     </div>
   `
 })
-export class ClientsComponent implements AfterViewInit {
+export class ClientsComponent implements OnInit {
   clients: Client[] = [];
-  loading = true;
+  loading = false;
   dialogVisible = false;
   editMode = false;
   currentClient: Partial<Client> = {};
@@ -101,23 +101,27 @@ export class ClientsComponent implements AfterViewInit {
   constructor(
     private api: ApiService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  ngAfterViewInit() {
-    setTimeout(() => this.loadClients(), 0);
+  ngOnInit() {
+    this.loadClients();
   }
 
   loadClients() {
     this.loading = true;
+    this.cdr.detectChanges();
     this.api.getClients().subscribe({
       next: (data) => {
         this.clients = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load clients' });
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
