@@ -68,17 +68,15 @@ export class ProjectsComponent implements OnInit {
 
   loadData() {
     this.loading = true;
-    this.cdr.detectChanges();
+    
     this.api.getProjects().subscribe({
       next: (data) => {
         this.projects = data;
         this.loading = false;
-        this.cdr.detectChanges();
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load projects' });
         this.loading = false;
-        this.cdr.detectChanges();
       }
     });
     
@@ -92,7 +90,7 @@ export class ProjectsComponent implements OnInit {
     this.api.getTeamMembers().subscribe({
       next: (data) => {
         this.teamMembers = data;
-        this.teamMemberOptions = data.map(m => ({ label: `${m.name} (${m.role})`, value: m.id }));
+        this.teamMemberOptions = data.map(m => ({ label: m.name, value: m.id }));
       }
     });
   }
