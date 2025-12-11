@@ -14,11 +14,11 @@
             <th pSortableColumn="invoiceNumber">{{ t.get('invoices.invoiceNumber') }} <p-sortIcon field="invoiceNumber"></p-sortIcon></th>
             <th>{{ t.get('invoices.client') }}</th>
             <th>{{ t.get('invoices.project') }}</th>
-            <th>{{ t.get('invoices.dateRange') }}</th>
+            <th style="white-space: nowrap;">{{ t.get('invoices.dateRange') }}</th>
             <th pSortableColumn="total">{{ t.get('invoices.totalAmount') }} <p-sortIcon field="total"></p-sortIcon></th>
             <th>{{ t.get('invoices.status') }}</th>
             <th pSortableColumn="createdAt">Created <p-sortIcon field="createdAt"></p-sortIcon></th>
-            <th style="width: 180px;">{{ t.get('common.actions') }}</th>
+            <th style="width: 140px;">{{ t.get('common.actions') }}</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-invoice>
@@ -26,7 +26,7 @@
             <td>{{ invoice.invoiceNumber }}</td>
             <td>{{ invoice.client?.clientName || '-' }}</td>
             <td>{{ invoice.project?.projectName || 'All Projects' }}</td>
-            <td>{{ invoice.dateFrom | date:'mediumDate' }} - {{ invoice.dateTo | date:'mediumDate' }}</td>
+            <td style="white-space: nowrap;">{{ invoice.dateFrom | date:'shortDate' }} - {{ invoice.dateTo | date:'shortDate' }}</td>
             <td>${{ invoice.total | number:'1.2-2' }}</td>
             <td>
               <span class="badge" [ngClass]="getStatusClass(invoice.status)">
