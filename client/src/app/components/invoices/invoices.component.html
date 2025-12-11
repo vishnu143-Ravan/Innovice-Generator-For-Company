@@ -1,7 +1,7 @@
 <div class="container-fluid p-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Invoices</h2>
-    <p-button icon="pi pi-plus" label="Generate Invoice" (onClick)="openGenerateDialog()"></p-button>
+    <h2 class="mb-0">{{ t.get('invoices.title') }}</h2>
+    <p-button icon="pi pi-plus" [label]="t.get('invoices.generateInvoice')" (onClick)="openGenerateDialog()"></p-button>
   </div>
   
   <div class="card shadow-sm">
@@ -11,14 +11,14 @@
                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} invoices">
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="invoiceNumber">Invoice # <p-sortIcon field="invoiceNumber"></p-sortIcon></th>
-            <th>Client</th>
-            <th>Project</th>
-            <th>Period</th>
-            <th pSortableColumn="total">Total <p-sortIcon field="total"></p-sortIcon></th>
-            <th>Status</th>
+            <th pSortableColumn="invoiceNumber">{{ t.get('invoices.invoiceNumber') }} <p-sortIcon field="invoiceNumber"></p-sortIcon></th>
+            <th>{{ t.get('invoices.client') }}</th>
+            <th>{{ t.get('invoices.project') }}</th>
+            <th>{{ t.get('invoices.dateRange') }}</th>
+            <th pSortableColumn="total">{{ t.get('invoices.totalAmount') }} <p-sortIcon field="total"></p-sortIcon></th>
+            <th>{{ t.get('invoices.status') }}</th>
             <th pSortableColumn="createdAt">Created <p-sortIcon field="createdAt"></p-sortIcon></th>
-            <th style="width: 200px">Actions</th>
+            <th style="width: 200px">{{ t.get('common.actions') }}</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-invoice>
@@ -33,58 +33,58 @@
             </td>
             <td>{{ invoice.createdAt | date:'mediumDate' }}</td>
             <td>
-              <p-button icon="pi pi-eye" [rounded]="true" [text]="true" (onClick)="viewInvoice(invoice)" pTooltip="View"></p-button>
-              <p-button icon="pi pi-download" [rounded]="true" [text]="true" (onClick)="downloadPdf(invoice)" pTooltip="Download PDF"></p-button>
+              <p-button icon="pi pi-eye" [rounded]="true" [text]="true" (onClick)="viewInvoice(invoice)" [pTooltip]="t.get('invoices.viewDetails')"></p-button>
+              <p-button icon="pi pi-download" [rounded]="true" [text]="true" (onClick)="downloadPdf(invoice)" [pTooltip]="t.get('invoices.downloadPdf')"></p-button>
               <p-button icon="pi pi-check" [rounded]="true" [text]="true" severity="success" (onClick)="markAsPaid(invoice)" 
                         *ngIf="invoice.status !== 'paid'" pTooltip="Mark as Paid"></p-button>
-              <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(invoice)" pTooltip="Delete"></p-button>
+              <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(invoice)" [pTooltip]="t.get('common.delete')"></p-button>
             </td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="8" class="text-center text-muted py-4">No invoices found. Click "Generate Invoice" to create one.</td>
+            <td colspan="8" class="text-center text-muted py-4">{{ t.get('common.noData') }}</td>
           </tr>
         </ng-template>
       </p-table>
     </div>
   </div>
   
-  <p-dialog [(visible)]="generateDialogVisible" header="Generate Invoice" [modal]="true" [style]="{width: '500px'}">
+  <p-dialog [(visible)]="generateDialogVisible" [header]="t.get('invoices.generateInvoice')" [modal]="true" [style]="{width: '500px'}">
     <div class="mb-3">
-      <label for="client" class="form-label fw-semibold">Client <span class="text-danger">*</span></label>
+      <label for="client" class="form-label fw-semibold">{{ t.get('invoices.client') }} <span class="text-danger">*</span></label>
       <p-select id="client" [(ngModel)]="generateData.clientId" [options]="clientOptions" 
-                optionLabel="label" optionValue="value" placeholder="Select client" 
+                optionLabel="label" optionValue="value" [placeholder]="t.get('invoices.client')" 
                 class="w-100" (onChange)="onClientChange()"
                 [ngClass]="{'ng-invalid ng-dirty': submitted && !generateData.clientId}"></p-select>
-      <small *ngIf="submitted && !generateData.clientId" class="text-danger">Client is required</small>
+      <small *ngIf="submitted && !generateData.clientId" class="text-danger">{{ t.get('common.required') }}</small>
     </div>
     <div class="mb-3">
-      <label for="project" class="form-label fw-semibold">Project (optional)</label>
+      <label for="project" class="form-label fw-semibold">{{ t.get('invoices.project') }}</label>
       <p-select id="project" [(ngModel)]="generateData.projectId" [options]="clientProjectOptions" 
-                optionLabel="label" optionValue="value" placeholder="All projects for this client" 
+                optionLabel="label" optionValue="value" [placeholder]="t.get('invoices.project')" 
                 [showClear]="true" class="w-100"></p-select>
     </div>
     <div class="row">
       <div class="col-6">
         <div class="mb-3">
-          <label for="dateFrom" class="form-label fw-semibold">From Date <span class="text-danger">*</span></label>
+          <label for="dateFrom" class="form-label fw-semibold">{{ t.get('invoices.fromDate') }} <span class="text-danger">*</span></label>
           <p-datepicker id="dateFrom" [(ngModel)]="dateFromObj" dateFormat="yy-mm-dd" class="w-100"
                         [ngClass]="{'ng-invalid ng-dirty': submitted && !dateFromObj}"></p-datepicker>
-          <small *ngIf="submitted && !dateFromObj" class="text-danger">From date is required</small>
+          <small *ngIf="submitted && !dateFromObj" class="text-danger">{{ t.get('common.required') }}</small>
         </div>
       </div>
       <div class="col-6">
         <div class="mb-3">
-          <label for="dateTo" class="form-label fw-semibold">To Date <span class="text-danger">*</span></label>
+          <label for="dateTo" class="form-label fw-semibold">{{ t.get('invoices.toDate') }} <span class="text-danger">*</span></label>
           <p-datepicker id="dateTo" [(ngModel)]="dateToObj" dateFormat="yy-mm-dd" class="w-100"
                         [ngClass]="{'ng-invalid ng-dirty': submitted && !dateToObj}"></p-datepicker>
-          <small *ngIf="submitted && !dateToObj" class="text-danger">To date is required</small>
+          <small *ngIf="submitted && !dateToObj" class="text-danger">{{ t.get('common.required') }}</small>
         </div>
       </div>
     </div>
     <div class="d-flex justify-content-end gap-2 mt-4">
-      <p-button label="Cancel" [text]="true" (onClick)="generateDialogVisible = false"></p-button>
+      <p-button [label]="t.get('common.cancel')" [text]="true" (onClick)="generateDialogVisible = false"></p-button>
       <p-button label="Generate" (onClick)="generateInvoice()"></p-button>
     </div>
   </p-dialog>
@@ -142,8 +142,8 @@
       </table>
     </div>
     <div class="d-flex justify-content-end gap-2 mt-4">
-      <p-button label="Close" [text]="true" (onClick)="viewDialogVisible = false"></p-button>
-      <p-button label="Download PDF" icon="pi pi-download" (onClick)="downloadPdf(selectedInvoice!)"></p-button>
+      <p-button [label]="t.get('common.cancel')" [text]="true" (onClick)="viewDialogVisible = false"></p-button>
+      <p-button [label]="t.get('invoices.downloadPdf')" icon="pi pi-download" (onClick)="downloadPdf(selectedInvoice!)"></p-button>
     </div>
   </p-dialog>
   

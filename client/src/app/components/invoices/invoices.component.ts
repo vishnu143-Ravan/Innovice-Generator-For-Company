@@ -8,9 +8,11 @@ import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ApiService } from '../../services/api.service';
 import { ConfirmSaveService } from '../../shared/confirm-save.service';
+import { TranslateService } from '../../shared/translate.service';
 import { Invoice, Client, Project } from '../../models/models';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -21,7 +23,7 @@ import autoTable from 'jspdf-autotable';
   imports: [
     CommonModule, FormsModule, TableModule, ButtonModule,
     DialogModule, SelectModule, DatePickerModule, 
-    ConfirmDialogModule, ToastModule
+    ConfirmDialogModule, ToastModule, TooltipModule
   ],
   templateUrl: './invoices.component.html'
 })
@@ -48,7 +50,8 @@ export class InvoicesComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private cdr: ChangeDetectorRef,
-    private confirmSaveService: ConfirmSaveService
+    private confirmSaveService: ConfirmSaveService,
+    public t: TranslateService
   ) {}
 
   ngOnInit() {
@@ -86,7 +89,9 @@ export class InvoicesComponent implements OnInit {
   }
 
   formatStatus(status: string): string {
-    return status.charAt(0).toUpperCase() + status.slice(1);
+    const statusKey = `invoices.${status}`;
+    const translated = this.t.get(statusKey);
+    return translated !== statusKey ? translated : status.charAt(0).toUpperCase() + status.slice(1);
   }
 
   getStatusClass(status: string): string {

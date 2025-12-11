@@ -11,6 +11,7 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ApiService } from '../../services/api.service';
 import { ConfirmSaveService } from '../../shared/confirm-save.service';
+import { TranslateService } from '../../shared/translate.service';
 import { Client } from '../../models/models';
 
 @Component({
@@ -36,7 +37,8 @@ export class ClientsComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private cdr: ChangeDetectorRef,
-    private confirmSaveService: ConfirmSaveService
+    private confirmSaveService: ConfirmSaveService,
+    public t: TranslateService
   ) {}
 
   ngOnInit() {

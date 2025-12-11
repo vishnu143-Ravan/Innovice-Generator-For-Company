@@ -12,6 +12,7 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ApiService } from '../../services/api.service';
 import { ConfirmSaveService } from '../../shared/confirm-save.service';
+import { TranslateService } from '../../shared/translate.service';
 import { TeamMember } from '../../models/models';
 
 @Component({
@@ -32,21 +33,27 @@ export class TeamMembersComponent implements OnInit {
   currentMember: any = {};
   submitted = false;
   
-  billingTypes = [
-    { label: 'Hourly', value: 'hourly' },
-    { label: 'Monthly', value: 'monthly' }
-  ];
+  billingTypes: any[] = [];
 
   constructor(
     private api: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private cdr: ChangeDetectorRef,
-    private confirmSaveService: ConfirmSaveService
+    private confirmSaveService: ConfirmSaveService,
+    public t: TranslateService
   ) {}
 
   ngOnInit() {
+    this.updateBillingTypes();
     this.loadMembers();
+  }
+
+  updateBillingTypes() {
+    this.billingTypes = [
+      { label: this.t.get('teamMembers.hourly'), value: 'hourly' },
+      { label: this.t.get('teamMembers.monthly'), value: 'monthly' }
+    ];
   }
 
   loadMembers() {
@@ -67,6 +74,7 @@ export class TeamMembersComponent implements OnInit {
   }
 
   openDialog() {
+    this.updateBillingTypes();
     this.currentMember = { billingType: 'hourly' };
     this.editMode = false;
     this.submitted = false;
@@ -74,6 +82,7 @@ export class TeamMembersComponent implements OnInit {
   }
 
   editMember(member: TeamMember) {
+    this.updateBillingTypes();
     this.currentMember = { ...member, rate: parseFloat(member.rate) };
     this.editMode = true;
     this.submitted = false;

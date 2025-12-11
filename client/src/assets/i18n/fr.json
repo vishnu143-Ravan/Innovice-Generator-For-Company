@@ -1,0 +1,101 @@
+{
+  "app": {
+    "title": "Uniquode Projects"
+  },
+  "nav": {
+    "clients": "Clients",
+    "teamMembers": "Membres de l'équipe",
+    "projects": "Projets",
+    "timeTracking": "Suivi du temps",
+    "invoices": "Factures"
+  },
+  "common": {
+    "add": "Ajouter",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "actions": "Actions",
+    "search": "Rechercher",
+    "loading": "Chargement...",
+    "noData": "Aucune donnée disponible",
+    "required": "Ce champ est obligatoire",
+    "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+    "success": "Succès",
+    "error": "Erreur",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "clients": {
+    "title": "Clients",
+    "addClient": "Ajouter un client",
+    "editClient": "Modifier le client",
+    "name": "Nom",
+    "email": "E-mail",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce client ?"
+  },
+  "teamMembers": {
+    "title": "Membres de l'équipe",
+    "addMember": "Ajouter un membre",
+    "editMember": "Modifier le membre",
+    "name": "Nom",
+    "email": "E-mail",
+    "role": "Rôle",
+    "billingType": "Type de facturation",
+    "rate": "Tarif",
+    "hourly": "Horaire",
+    "monthly": "Mensuel",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce membre ?"
+  },
+  "projects": {
+    "title": "Projets",
+    "addProject": "Ajouter un projet",
+    "editProject": "Modifier le projet",
+    "projectName": "Nom du projet",
+    "client": "Client",
+    "description": "Description",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "status": "Statut",
+    "assignedMembers": "Membres assignés",
+    "active": "Actif",
+    "completed": "Terminé",
+    "onHold": "En attente",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce projet ?"
+  },
+  "timeEntries": {
+    "title": "Suivi du temps",
+    "addEntry": "Ajouter une entrée",
+    "editEntry": "Modifier l'entrée",
+    "project": "Projet",
+    "teamMember": "Membre de l'équipe",
+    "date": "Date",
+    "hours": "Heures",
+    "days": "Jours",
+    "description": "Description",
+    "amount": "Montant",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette entrée ?"
+  },
+  "invoices": {
+    "title": "Factures",
+    "generateInvoice": "Générer une facture",
+    "invoiceNumber": "Numéro de facture",
+    "client": "Client",
+    "project": "Projet",
+    "dateRange": "Période",
+    "fromDate": "Date de début",
+    "toDate": "Date de fin",
+    "totalAmount": "Montant total",
+    "status": "Statut",
+    "draft": "Brouillon",
+    "sent": "Envoyée",
+    "paid": "Payée",
+    "overdue": "En retard",
+    "downloadPdf": "Télécharger PDF",
+    "viewDetails": "Voir les détails",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette facture ?"
+  }
+}

@@ -91,3 +91,14 @@ npm run db:studio  # Open Drizzle Studio
 ## UI Components
 - **PrimeNG**: DataTables with sorting, pagination, and filtering
 - **Bootstrap 5**: Layout, cards, badges, buttons, and utility classes
+
+## Multi-Language Support
+The application supports English and French languages with a language switcher in the header.
+
+### Translation Files
+- `client/src/assets/i18n/en.json` - English translations
+- `client/src/assets/i18n/fr.json` - French translations
+
+### Usage
+- Click EN or FR buttons in the top-right corner to switch languages
+- Language preference is saved in browser localStorage

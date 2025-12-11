@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslateService } from '../../shared/translate.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -19,4 +20,6 @@ import { RouterModule } from '@angular/router';
     }
   `]
 })
-export class SidebarComponent {}
+export class SidebarComponent {
+  constructor(public t: TranslateService) {}
+}

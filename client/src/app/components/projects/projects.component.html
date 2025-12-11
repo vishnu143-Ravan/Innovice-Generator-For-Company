@@ -1,7 +1,7 @@
 <div class="container-fluid p-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Projects</h2>
-    <p-button icon="pi pi-plus" label="Add Project" (onClick)="openDialog()"></p-button>
+    <h2 class="mb-0">{{ t.get('projects.title') }}</h2>
+    <p-button icon="pi pi-plus" [label]="t.get('projects.addProject')" (onClick)="openDialog()"></p-button>
   </div>
   
   <div class="card shadow-sm">
@@ -11,13 +11,13 @@
                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} projects">
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="projectName">Project Name <p-sortIcon field="projectName"></p-sortIcon></th>
-            <th>Client</th>
-            <th>Team Members</th>
-            <th pSortableColumn="startDate">Start Date <p-sortIcon field="startDate"></p-sortIcon></th>
-            <th>End Date</th>
-            <th>Status</th>
-            <th style="width: 150px">Actions</th>
+            <th pSortableColumn="projectName">{{ t.get('projects.projectName') }} <p-sortIcon field="projectName"></p-sortIcon></th>
+            <th>{{ t.get('projects.client') }}</th>
+            <th>{{ t.get('projects.assignedMembers') }}</th>
+            <th pSortableColumn="startDate">{{ t.get('projects.startDate') }} <p-sortIcon field="startDate"></p-sortIcon></th>
+            <th>{{ t.get('projects.endDate') }}</th>
+            <th>{{ t.get('projects.status') }}</th>
+            <th style="width: 150px">{{ t.get('common.actions') }}</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-project>
@@ -43,62 +43,62 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="7" class="text-center text-muted py-4">No projects found. Click "Add Project" to create one.</td>
+            <td colspan="7" class="text-center text-muted py-4">{{ t.get('common.noData') }}</td>
           </tr>
         </ng-template>
       </p-table>
     </div>
   </div>
   
-  <p-dialog [(visible)]="dialogVisible" [header]="editMode ? 'Edit Project' : 'Add Project'" [modal]="true" [style]="{width: '600px'}">
+  <p-dialog [(visible)]="dialogVisible" [header]="editMode ? t.get('projects.editProject') : t.get('projects.addProject')" [modal]="true" [style]="{width: '600px'}">
     <div class="mb-3">
-      <label for="projectName" class="form-label fw-semibold">Project Name <span class="text-danger">*</span></label>
+      <label for="projectName" class="form-label fw-semibold">{{ t.get('projects.projectName') }} <span class="text-danger">*</span></label>
       <input pInputText id="projectName" [(ngModel)]="currentProject.projectName" class="w-100"
              [ngClass]="{'ng-invalid ng-dirty': submitted && !currentProject.projectName}" />
-      <small *ngIf="submitted && !currentProject.projectName" class="text-danger">Project name is required</small>
+      <small *ngIf="submitted && !currentProject.projectName" class="text-danger">{{ t.get('common.required') }}</small>
     </div>
     <div class="mb-3">
-      <label for="client" class="form-label fw-semibold">Client <span class="text-danger">*</span></label>
+      <label for="client" class="form-label fw-semibold">{{ t.get('projects.client') }} <span class="text-danger">*</span></label>
       <p-select id="client" [(ngModel)]="currentProject.clientId" [options]="clientOptions" 
-                optionLabel="label" optionValue="value" placeholder="Select client" class="w-100"
+                optionLabel="label" optionValue="value" [placeholder]="t.get('projects.client')" class="w-100"
                 [ngClass]="{'ng-invalid ng-dirty': submitted && !currentProject.clientId}"></p-select>
-      <small *ngIf="submitted && !currentProject.clientId" class="text-danger">Client is required</small>
+      <small *ngIf="submitted && !currentProject.clientId" class="text-danger">{{ t.get('common.required') }}</small>
     </div>
     <div class="mb-3">
-      <label for="description" class="form-label fw-semibold">Description</label>
+      <label for="description" class="form-label fw-semibold">{{ t.get('projects.description') }}</label>
       <textarea pTextarea id="description" [(ngModel)]="currentProject.description" class="w-100" rows="3"></textarea>
     </div>
     <div class="row">
       <div class="col-6">
         <div class="mb-3">
-          <label for="startDate" class="form-label fw-semibold">Start Date <span class="text-danger">*</span></label>
+          <label for="startDate" class="form-label fw-semibold">{{ t.get('projects.startDate') }} <span class="text-danger">*</span></label>
           <p-datepicker id="startDate" [(ngModel)]="startDateObj" dateFormat="yy-mm-dd" class="w-100"
                         [ngClass]="{'ng-invalid ng-dirty': submitted && !startDateObj}"></p-datepicker>
-          <small *ngIf="submitted && !startDateObj" class="text-danger">Start date is required</small>
+          <small *ngIf="submitted && !startDateObj" class="text-danger">{{ t.get('common.required') }}</small>
         </div>
       </div>
       <div class="col-6">
         <div class="mb-3">
-          <label for="endDate" class="form-label fw-semibold">End Date</label>
+          <label for="endDate" class="form-label fw-semibold">{{ t.get('projects.endDate') }}</label>
           <p-datepicker id="endDate" [(ngModel)]="endDateObj" dateFormat="yy-mm-dd" class="w-100"></p-datepicker>
         </div>
       </div>
     </div>
     <div class="mb-3">
-      <label for="status" class="form-label fw-semibold">Status <span class="text-danger">*</span></label>
+      <label for="status" class="form-label fw-semibold">{{ t.get('projects.status') }} <span class="text-danger">*</span></label>
       <p-select id="status" [(ngModel)]="currentProject.status" [options]="statusOptions" 
-                optionLabel="label" optionValue="value" placeholder="Select status" class="w-100"
+                optionLabel="label" optionValue="value" [placeholder]="t.get('projects.status')" class="w-100"
                 [ngClass]="{'ng-invalid ng-dirty': submitted && !currentProject.status}"></p-select>
-      <small *ngIf="submitted && !currentProject.status" class="text-danger">Status is required</small>
+      <small *ngIf="submitted && !currentProject.status" class="text-danger">{{ t.get('common.required') }}</small>
     </div>
     <div class="mb-3">
-      <label for="teamMembers" class="form-label fw-semibold">Assign Team Members</label>
+      <label for="teamMembers" class="form-label fw-semibold">{{ t.get('projects.assignedMembers') }}</label>
       <p-multiSelect id="teamMembers" [(ngModel)]="selectedTeamMemberIds" [options]="teamMemberOptions"
-                     optionLabel="label" optionValue="value" placeholder="Select team members" class="w-100"></p-multiSelect>
+                     optionLabel="label" optionValue="value" [placeholder]="t.get('projects.assignedMembers')" class="w-100"></p-multiSelect>
     </div>
     <div class="d-flex justify-content-end gap-2 mt-4">
-      <p-button label="Cancel" [text]="true" (onClick)="dialogVisible = false"></p-button>
-      <p-button label="Save" (onClick)="saveProject()"></p-button>
+      <p-button [label]="t.get('common.cancel')" [text]="true" (onClick)="dialogVisible = false"></p-button>
+      <p-button [label]="t.get('common.save')" (onClick)="saveProject()"></p-button>
     </div>
   </p-dialog>
   

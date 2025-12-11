@@ -5,23 +5,23 @@
   <nav class="nav flex-column mt-2">
     <a routerLink="/clients" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-white-50 py-3 px-3">
       <i class="pi pi-users"></i>
-      <span>Clients</span>
+      <span>{{ t.get('nav.clients') }}</span>
     </a>
     <a routerLink="/team-members" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-white-50 py-3 px-3">
       <i class="pi pi-user"></i>
-      <span>Team Members</span>
+      <span>{{ t.get('nav.teamMembers') }}</span>
     </a>
     <a routerLink="/projects" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-white-50 py-3 px-3">
       <i class="pi pi-folder"></i>
-      <span>Projects</span>
+      <span>{{ t.get('nav.projects') }}</span>
     </a>
     <a routerLink="/time-entries" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-white-50 py-3 px-3">
       <i class="pi pi-clock"></i>
-      <span>Time Tracking</span>
+      <span>{{ t.get('nav.timeTracking') }}</span>
     </a>
     <a routerLink="/invoices" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-white-50 py-3 px-3">
       <i class="pi pi-file"></i>
-      <span>Invoices</span>
+      <span>{{ t.get('nav.invoices') }}</span>
     </a>
   </nav>
 </div>
