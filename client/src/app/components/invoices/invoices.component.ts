@@ -78,10 +78,12 @@ import autoTable from 'jspdf-autotable';
       
       <p-dialog [(visible)]="generateDialogVisible" header="Generate Invoice" [modal]="true" [style]="{width: '500px'}">
         <div class="mb-3">
-          <label for="client" class="form-label fw-semibold">Client *</label>
+          <label for="client" class="form-label fw-semibold">Client <span class="text-danger">*</span></label>
           <p-select id="client" [(ngModel)]="generateData.clientId" [options]="clientOptions" 
                     optionLabel="label" optionValue="value" placeholder="Select client" 
-                    class="w-100" (onChange)="onClientChange()"></p-select>
+                    class="w-100" (onChange)="onClientChange()"
+                    [ngClass]="{'ng-invalid ng-dirty': submitted && !generateData.clientId}"></p-select>
+          <small *ngIf="submitted && !generateData.clientId" class="text-danger">Client is required</small>
         </div>
         <div class="mb-3">
           <label for="project" class="form-label fw-semibold">Project (optional)</label>
@@ -92,20 +94,24 @@ import autoTable from 'jspdf-autotable';
         <div class="row">
           <div class="col-6">
             <div class="mb-3">
-              <label for="dateFrom" class="form-label fw-semibold">From Date *</label>
-              <p-datepicker id="dateFrom" [(ngModel)]="dateFromObj" dateFormat="yy-mm-dd" class="w-100"></p-datepicker>
+              <label for="dateFrom" class="form-label fw-semibold">From Date <span class="text-danger">*</span></label>
+              <p-datepicker id="dateFrom" [(ngModel)]="dateFromObj" dateFormat="yy-mm-dd" class="w-100"
+                            [ngClass]="{'ng-invalid ng-dirty': submitted && !dateFromObj}"></p-datepicker>
+              <small *ngIf="submitted && !dateFromObj" class="text-danger">From date is required</small>
             </div>
           </div>
           <div class="col-6">
             <div class="mb-3">
-              <label for="dateTo" class="form-label fw-semibold">To Date *</label>
-              <p-datepicker id="dateTo" [(ngModel)]="dateToObj" dateFormat="yy-mm-dd" class="w-100"></p-datepicker>
+              <label for="dateTo" class="form-label fw-semibold">To Date <span class="text-danger">*</span></label>
+              <p-datepicker id="dateTo" [(ngModel)]="dateToObj" dateFormat="yy-mm-dd" class="w-100"
+                            [ngClass]="{'ng-invalid ng-dirty': submitted && !dateToObj}"></p-datepicker>
+              <small *ngIf="submitted && !dateToObj" class="text-danger">To date is required</small>
             </div>
           </div>
         </div>
         <div class="d-flex justify-content-end gap-2 mt-4">
           <p-button label="Cancel" [text]="true" (onClick)="generateDialogVisible = false"></p-button>
-          <p-button label="Generate" (onClick)="generateInvoice()" [disabled]="!isGenerateValid()"></p-button>
+          <p-button label="Generate" (onClick)="generateInvoice()"></p-button>
         </div>
       </p-dialog>
       
@@ -177,6 +183,7 @@ export class InvoicesComponent implements OnInit {
   clients: Client[] = [];
   projects: Project[] = [];
   loading = false;
+  submitted = false;
   
   generateDialogVisible = false;
   viewDialogVisible = false;
@@ -250,6 +257,7 @@ export class InvoicesComponent implements OnInit {
     this.dateFromObj = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     this.dateToObj = new Date();
     this.clientProjectOptions = [];
+    this.submitted = false;
     this.generateDialogVisible = true;
   }
 
@@ -273,6 +281,9 @@ export class InvoicesComponent implements OnInit {
   }
 
   async generateInvoice() {
+    this.submitted = true;
+    if (!this.isGenerateValid()) return;
+
     const confirmed = await this.confirmSaveService.confirmAction('Are you sure you want to generate this invoice?', 'Confirm Generate');
     if (!confirmed) return;
 

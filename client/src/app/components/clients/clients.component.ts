@@ -65,12 +65,17 @@ import { Client } from '../../models/models';
       
       <p-dialog [(visible)]="dialogVisible" [header]="editMode ? 'Edit Client' : 'Add Client'" [modal]="true" [style]="{width: '500px'}">
         <div class="mb-3">
-          <label for="clientName" class="form-label fw-semibold">Client Name *</label>
-          <input pInputText id="clientName" [(ngModel)]="currentClient.clientName" class="w-100" required />
+          <label for="clientName" class="form-label fw-semibold">Client Name <span class="text-danger">*</span></label>
+          <input pInputText id="clientName" [(ngModel)]="currentClient.clientName" class="w-100" 
+                 [ngClass]="{'ng-invalid ng-dirty': submitted && !currentClient.clientName}" />
+          <small *ngIf="submitted && !currentClient.clientName" class="text-danger">Client name is required</small>
         </div>
         <div class="mb-3">
-          <label for="email" class="form-label fw-semibold">Email *</label>
-          <input pInputText id="email" [(ngModel)]="currentClient.email" class="w-100" type="email" required />
+          <label for="email" class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+          <input pInputText id="email" [(ngModel)]="currentClient.email" class="w-100" type="email"
+                 [ngClass]="{'ng-invalid ng-dirty': submitted && !currentClient.email}" />
+          <small *ngIf="submitted && !currentClient.email" class="text-danger">Email is required</small>
+          <small *ngIf="submitted && currentClient.email && !isValidEmail(currentClient.email)" class="text-danger">Please enter a valid email</small>
         </div>
         <div class="mb-3">
           <label for="phone" class="form-label fw-semibold">Phone</label>
@@ -82,7 +87,7 @@ import { Client } from '../../models/models';
         </div>
         <div class="d-flex justify-content-end gap-2 mt-4">
           <p-button label="Cancel" [text]="true" (onClick)="dialogVisible = false"></p-button>
-          <p-button label="Save" (onClick)="saveClient()" [disabled]="!currentClient.clientName || !currentClient.email"></p-button>
+          <p-button label="Save" (onClick)="saveClient()"></p-button>
         </div>
       </p-dialog>
       
@@ -97,6 +102,7 @@ export class ClientsComponent implements OnInit {
   dialogVisible = false;
   editMode = false;
   currentClient: Partial<Client> = {};
+  submitted = false;
 
   constructor(
     private api: ApiService,
@@ -130,16 +136,32 @@ export class ClientsComponent implements OnInit {
   openDialog() {
     this.currentClient = {};
     this.editMode = false;
+    this.submitted = false;
     this.dialogVisible = true;
   }
 
   editClient(client: Client) {
     this.currentClient = { ...client };
     this.editMode = true;
+    this.submitted = false;
     this.dialogVisible = true;
   }
 
+  isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  isValid(): boolean {
+    return !!this.currentClient.clientName && 
+           !!this.currentClient.email && 
+           this.isValidEmail(this.currentClient.email);
+  }
+
   async saveClient() {
+    this.submitted = true;
+    if (!this.isValid()) return;
+
     const confirmed = await this.confirmSaveService.confirmSave('client');
     if (!confirmed) return;
 

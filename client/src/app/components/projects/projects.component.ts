@@ -81,13 +81,17 @@ import { Project, Client, TeamMember } from '../../models/models';
       
       <p-dialog [(visible)]="dialogVisible" [header]="editMode ? 'Edit Project' : 'Add Project'" [modal]="true" [style]="{width: '600px'}">
         <div class="mb-3">
-          <label for="projectName" class="form-label fw-semibold">Project Name *</label>
-          <input pInputText id="projectName" [(ngModel)]="currentProject.projectName" class="w-100" required />
+          <label for="projectName" class="form-label fw-semibold">Project Name <span class="text-danger">*</span></label>
+          <input pInputText id="projectName" [(ngModel)]="currentProject.projectName" class="w-100"
+                 [ngClass]="{'ng-invalid ng-dirty': submitted && !currentProject.projectName}" />
+          <small *ngIf="submitted && !currentProject.projectName" class="text-danger">Project name is required</small>
         </div>
         <div class="mb-3">
-          <label for="client" class="form-label fw-semibold">Client *</label>
+          <label for="client" class="form-label fw-semibold">Client <span class="text-danger">*</span></label>
           <p-select id="client" [(ngModel)]="currentProject.clientId" [options]="clientOptions" 
-                    optionLabel="label" optionValue="value" placeholder="Select client" class="w-100"></p-select>
+                    optionLabel="label" optionValue="value" placeholder="Select client" class="w-100"
+                    [ngClass]="{'ng-invalid ng-dirty': submitted && !currentProject.clientId}"></p-select>
+          <small *ngIf="submitted && !currentProject.clientId" class="text-danger">Client is required</small>
         </div>
         <div class="mb-3">
           <label for="description" class="form-label fw-semibold">Description</label>
@@ -96,8 +100,10 @@ import { Project, Client, TeamMember } from '../../models/models';
         <div class="row">
           <div class="col-6">
             <div class="mb-3">
-              <label for="startDate" class="form-label fw-semibold">Start Date *</label>
-              <p-datepicker id="startDate" [(ngModel)]="startDateObj" dateFormat="yy-mm-dd" class="w-100"></p-datepicker>
+              <label for="startDate" class="form-label fw-semibold">Start Date <span class="text-danger">*</span></label>
+              <p-datepicker id="startDate" [(ngModel)]="startDateObj" dateFormat="yy-mm-dd" class="w-100"
+                            [ngClass]="{'ng-invalid ng-dirty': submitted && !startDateObj}"></p-datepicker>
+              <small *ngIf="submitted && !startDateObj" class="text-danger">Start date is required</small>
             </div>
           </div>
           <div class="col-6">
@@ -108,9 +114,11 @@ import { Project, Client, TeamMember } from '../../models/models';
           </div>
         </div>
         <div class="mb-3">
-          <label for="status" class="form-label fw-semibold">Status *</label>
+          <label for="status" class="form-label fw-semibold">Status <span class="text-danger">*</span></label>
           <p-select id="status" [(ngModel)]="currentProject.status" [options]="statusOptions" 
-                    optionLabel="label" optionValue="value" placeholder="Select status" class="w-100"></p-select>
+                    optionLabel="label" optionValue="value" placeholder="Select status" class="w-100"
+                    [ngClass]="{'ng-invalid ng-dirty': submitted && !currentProject.status}"></p-select>
+          <small *ngIf="submitted && !currentProject.status" class="text-danger">Status is required</small>
         </div>
         <div class="mb-3">
           <label for="teamMembers" class="form-label fw-semibold">Assign Team Members</label>
@@ -119,7 +127,7 @@ import { Project, Client, TeamMember } from '../../models/models';
         </div>
         <div class="d-flex justify-content-end gap-2 mt-4">
           <p-button label="Cancel" [text]="true" (onClick)="dialogVisible = false"></p-button>
-          <p-button label="Save" (onClick)="saveProject()" [disabled]="!isValid()"></p-button>
+          <p-button label="Save" (onClick)="saveProject()"></p-button>
         </div>
       </p-dialog>
       
@@ -139,6 +147,7 @@ export class ProjectsComponent implements OnInit {
   selectedTeamMemberIds: number[] = [];
   startDateObj: Date | null = null;
   endDateObj: Date | null = null;
+  submitted = false;
   
   clientOptions: { label: string; value: number }[] = [];
   teamMemberOptions: { label: string; value: number }[] = [];
@@ -215,6 +224,7 @@ export class ProjectsComponent implements OnInit {
     this.startDateObj = null;
     this.endDateObj = null;
     this.editMode = false;
+    this.submitted = false;
     this.dialogVisible = true;
   }
 
@@ -224,6 +234,7 @@ export class ProjectsComponent implements OnInit {
     this.startDateObj = project.startDate ? new Date(project.startDate) : null;
     this.endDateObj = project.endDate ? new Date(project.endDate) : null;
     this.editMode = true;
+    this.submitted = false;
     this.dialogVisible = true;
   }
 
@@ -233,6 +244,9 @@ export class ProjectsComponent implements OnInit {
   }
 
   async saveProject() {
+    this.submitted = true;
+    if (!this.isValid()) return;
+
     const confirmed = await this.confirmSaveService.confirmSave('project');
     if (!confirmed) return;
 

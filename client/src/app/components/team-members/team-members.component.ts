@@ -72,29 +72,40 @@ import { TeamMember } from '../../models/models';
       
       <p-dialog [(visible)]="dialogVisible" [header]="editMode ? 'Edit Team Member' : 'Add Team Member'" [modal]="true" [style]="{width: '500px'}">
         <div class="mb-3">
-          <label for="name" class="form-label fw-semibold">Name *</label>
-          <input pInputText id="name" [(ngModel)]="currentMember.name" class="w-100" required />
+          <label for="name" class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
+          <input pInputText id="name" [(ngModel)]="currentMember.name" class="w-100"
+                 [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.name}" />
+          <small *ngIf="submitted && !currentMember.name" class="text-danger">Name is required</small>
         </div>
         <div class="mb-3">
-          <label for="email" class="form-label fw-semibold">Email *</label>
-          <input pInputText id="email" [(ngModel)]="currentMember.email" class="w-100" type="email" required />
+          <label for="email" class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+          <input pInputText id="email" [(ngModel)]="currentMember.email" class="w-100" type="email"
+                 [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.email}" />
+          <small *ngIf="submitted && !currentMember.email" class="text-danger">Email is required</small>
+          <small *ngIf="submitted && currentMember.email && !isValidEmail(currentMember.email)" class="text-danger">Please enter a valid email</small>
         </div>
         <div class="mb-3">
-          <label for="role" class="form-label fw-semibold">Role *</label>
-          <input pInputText id="role" [(ngModel)]="currentMember.role" class="w-100" required />
+          <label for="role" class="form-label fw-semibold">Role <span class="text-danger">*</span></label>
+          <input pInputText id="role" [(ngModel)]="currentMember.role" class="w-100"
+                 [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.role}" />
+          <small *ngIf="submitted && !currentMember.role" class="text-danger">Role is required</small>
         </div>
         <div class="mb-3">
-          <label for="billingType" class="form-label fw-semibold">Billing Type *</label>
+          <label for="billingType" class="form-label fw-semibold">Billing Type <span class="text-danger">*</span></label>
           <p-select id="billingType" [(ngModel)]="currentMember.billingType" [options]="billingTypes" 
-                    optionLabel="label" optionValue="value" placeholder="Select billing type" class="w-100"></p-select>
+                    optionLabel="label" optionValue="value" placeholder="Select billing type" class="w-100"
+                    [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.billingType}"></p-select>
+          <small *ngIf="submitted && !currentMember.billingType" class="text-danger">Billing type is required</small>
         </div>
         <div class="mb-3">
-          <label for="rate" class="form-label fw-semibold">Rate *</label>
-          <p-inputNumber id="rate" [(ngModel)]="currentMember.rate" mode="currency" currency="USD" locale="en-US" class="w-100"></p-inputNumber>
+          <label for="rate" class="form-label fw-semibold">Rate <span class="text-danger">*</span></label>
+          <p-inputNumber id="rate" [(ngModel)]="currentMember.rate" mode="currency" currency="USD" locale="en-US" class="w-100"
+                         [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.rate}"></p-inputNumber>
+          <small *ngIf="submitted && !currentMember.rate" class="text-danger">Rate is required</small>
         </div>
         <div class="d-flex justify-content-end gap-2 mt-4">
           <p-button label="Cancel" [text]="true" (onClick)="dialogVisible = false"></p-button>
-          <p-button label="Save" (onClick)="saveMember()" [disabled]="!isValid()"></p-button>
+          <p-button label="Save" (onClick)="saveMember()"></p-button>
         </div>
       </p-dialog>
       
@@ -109,6 +120,7 @@ export class TeamMembersComponent implements OnInit {
   dialogVisible = false;
   editMode = false;
   currentMember: any = {};
+  submitted = false;
   
   billingTypes = [
     { label: 'Hourly', value: 'hourly' },
@@ -147,21 +159,32 @@ export class TeamMembersComponent implements OnInit {
   openDialog() {
     this.currentMember = { billingType: 'hourly' };
     this.editMode = false;
+    this.submitted = false;
     this.dialogVisible = true;
   }
 
   editMember(member: TeamMember) {
     this.currentMember = { ...member, rate: parseFloat(member.rate) };
     this.editMode = true;
+    this.submitted = false;
     this.dialogVisible = true;
+  }
+
+  isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 
   isValid(): boolean {
     return this.currentMember.name && this.currentMember.email && 
+           this.isValidEmail(this.currentMember.email) &&
            this.currentMember.role && this.currentMember.billingType && this.currentMember.rate;
   }
 
   async saveMember() {
+    this.submitted = true;
+    if (!this.isValid()) return;
+
     const confirmed = await this.confirmSaveService.confirmSave('team member');
     if (!confirmed) return;
 

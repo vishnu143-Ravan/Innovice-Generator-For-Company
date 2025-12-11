@@ -106,24 +106,32 @@ import { TimeEntry, Project, TeamMember } from '../../models/models';
       
       <p-dialog [(visible)]="dialogVisible" [header]="editMode ? 'Edit Time Entry' : 'Add Time Entry'" [modal]="true" [style]="{width: '500px'}">
         <div class="mb-3">
-          <label for="project" class="form-label fw-semibold">Project *</label>
+          <label for="project" class="form-label fw-semibold">Project <span class="text-danger">*</span></label>
           <p-select id="project" [(ngModel)]="currentEntry.projectId" [options]="projectOptions" 
                     optionLabel="label" optionValue="value" placeholder="Select project" 
-                    class="w-100" (onChange)="onProjectChange()"></p-select>
+                    class="w-100" (onChange)="onProjectChange()"
+                    [ngClass]="{'ng-invalid ng-dirty': submitted && !currentEntry.projectId}"></p-select>
+          <small *ngIf="submitted && !currentEntry.projectId" class="text-danger">Project is required</small>
         </div>
         <div class="mb-3">
-          <label for="teamMember" class="form-label fw-semibold">Team Member *</label>
+          <label for="teamMember" class="form-label fw-semibold">Team Member <span class="text-danger">*</span></label>
           <p-select id="teamMember" [(ngModel)]="currentEntry.teamMemberId" [options]="assignedMemberOptions" 
-                    optionLabel="label" optionValue="value" placeholder="Select team member" class="w-100"></p-select>
+                    optionLabel="label" optionValue="value" placeholder="Select team member" class="w-100"
+                    [ngClass]="{'ng-invalid ng-dirty': submitted && !currentEntry.teamMemberId}"></p-select>
+          <small *ngIf="submitted && !currentEntry.teamMemberId" class="text-danger">Team member is required</small>
         </div>
         <div class="mb-3">
-          <label for="date" class="form-label fw-semibold">Date *</label>
-          <p-datepicker id="date" [(ngModel)]="entryDateObj" dateFormat="yy-mm-dd" class="w-100"></p-datepicker>
+          <label for="date" class="form-label fw-semibold">Date <span class="text-danger">*</span></label>
+          <p-datepicker id="date" [(ngModel)]="entryDateObj" dateFormat="yy-mm-dd" class="w-100"
+                        [ngClass]="{'ng-invalid ng-dirty': submitted && !entryDateObj}"></p-datepicker>
+          <small *ngIf="submitted && !entryDateObj" class="text-danger">Date is required</small>
         </div>
         <div class="mb-3">
-          <label for="hours" class="form-label fw-semibold">Hours *</label>
+          <label for="hours" class="form-label fw-semibold">Hours <span class="text-danger">*</span></label>
           <p-inputNumber id="hours" [(ngModel)]="currentEntry.hours" [minFractionDigits]="1" [maxFractionDigits]="2" 
-                         [min]="0.1" [max]="24" class="w-100"></p-inputNumber>
+                         [min]="0.1" [max]="24" class="w-100"
+                         [ngClass]="{'ng-invalid ng-dirty': submitted && !currentEntry.hours}"></p-inputNumber>
+          <small *ngIf="submitted && !currentEntry.hours" class="text-danger">Hours is required</small>
         </div>
         <div class="mb-3">
           <label for="description" class="form-label fw-semibold">Description</label>
@@ -131,7 +139,7 @@ import { TimeEntry, Project, TeamMember } from '../../models/models';
         </div>
         <div class="d-flex justify-content-end gap-2 mt-4">
           <p-button label="Cancel" [text]="true" (onClick)="dialogVisible = false"></p-button>
-          <p-button label="Save" (onClick)="saveEntry()" [disabled]="!isValid()"></p-button>
+          <p-button label="Save" (onClick)="saveEntry()"></p-button>
         </div>
       </p-dialog>
       
@@ -149,6 +157,7 @@ export class TimeEntriesComponent implements OnInit {
   editMode = false;
   currentEntry: any = {};
   entryDateObj: Date | null = null;
+  submitted = false;
   
   filterProjectId: number | null = null;
   filterTeamMemberId: number | null = null;
@@ -244,6 +253,7 @@ export class TimeEntriesComponent implements OnInit {
     this.entryDateObj = new Date();
     this.assignedMemberOptions = this.teamMemberOptions;
     this.editMode = false;
+    this.submitted = false;
     this.dialogVisible = true;
   }
 
@@ -253,6 +263,7 @@ export class TimeEntriesComponent implements OnInit {
     this.onProjectChange();
     this.currentEntry.teamMemberId = entry.teamMemberId;
     this.editMode = true;
+    this.submitted = false;
     this.dialogVisible = true;
   }
 
@@ -266,6 +277,9 @@ export class TimeEntriesComponent implements OnInit {
   }
 
   async saveEntry() {
+    this.submitted = true;
+    if (!this.isValid()) return;
+
     const confirmed = await this.confirmSaveService.confirmSave('time entry');
     if (!confirmed) return;
 
