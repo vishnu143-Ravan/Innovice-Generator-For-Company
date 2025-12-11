@@ -1,40 +1,40 @@
-<div class="container-fluid p-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">{{ t.get('timeEntries.title') }}</h2>
+<div class="p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">{{ t.get('timeEntries.title') }}</h2>
     <p-button icon="pi pi-plus" [label]="t.get('timeEntries.addEntry')" (onClick)="openDialog()"></p-button>
   </div>
   
-  <div class="card shadow-sm mb-4">
-    <div class="card-body">
-      <div class="row g-3">
-        <div class="col-md-3">
-          <label class="form-label fw-semibold">{{ t.get('timeEntries.project') }}</label>
+  <div class="bg-white rounded-lg shadow-md mb-6">
+    <div class="p-4">
+      <div class="grid grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">{{ t.get('timeEntries.project') }}</label>
           <p-select [(ngModel)]="filterProjectId" [options]="projectOptions" 
                     optionLabel="label" optionValue="value" [placeholder]="t.get('timeEntries.project')" 
-                    [showClear]="true" class="w-100" (onChange)="loadEntries()"></p-select>
+                    [showClear]="true" class="w-full" (onChange)="loadEntries()"></p-select>
         </div>
-        <div class="col-md-3">
-          <label class="form-label fw-semibold">{{ t.get('timeEntries.teamMember') }}</label>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">{{ t.get('timeEntries.teamMember') }}</label>
           <p-select [(ngModel)]="filterTeamMemberId" [options]="teamMemberOptions" 
                     optionLabel="label" optionValue="value" [placeholder]="t.get('timeEntries.teamMember')" 
-                    [showClear]="true" class="w-100" (onChange)="loadEntries()"></p-select>
+                    [showClear]="true" class="w-full" (onChange)="loadEntries()"></p-select>
         </div>
-        <div class="col-md-3">
-          <label class="form-label fw-semibold">{{ t.get('invoices.fromDate') }}</label>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">{{ t.get('invoices.fromDate') }}</label>
           <p-datepicker [(ngModel)]="filterDateFrom" dateFormat="yy-mm-dd" 
-                        class="w-100" (onSelect)="loadEntries()" [showClear]="true"></p-datepicker>
+                        class="w-full" (onSelect)="loadEntries()" [showClear]="true"></p-datepicker>
         </div>
-        <div class="col-md-3">
-          <label class="form-label fw-semibold">{{ t.get('invoices.toDate') }}</label>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">{{ t.get('invoices.toDate') }}</label>
           <p-datepicker [(ngModel)]="filterDateTo" dateFormat="yy-mm-dd" 
-                        class="w-100" (onSelect)="loadEntries()" [showClear]="true"></p-datepicker>
+                        class="w-full" (onSelect)="loadEntries()" [showClear]="true"></p-datepicker>
         </div>
       </div>
     </div>
   </div>
   
-  <div class="card shadow-sm">
-    <div class="card-body">
+  <div class="bg-white rounded-lg shadow-md">
+    <div class="p-4">
       <p-table [value]="timeEntries" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
                [rowsPerPageOptions]="[5,10,25,50]" dataKey="id" [loading]="loading"
                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
@@ -46,7 +46,7 @@
             <th pSortableColumn="hours">{{ t.get('timeEntries.hours') }} <p-sortIcon field="hours"></p-sortIcon></th>
             <th>{{ t.get('timeEntries.amount') }}</th>
             <th>{{ t.get('timeEntries.description') }}</th>
-            <th style="width: 150px">{{ t.get('common.actions') }}</th>
+            <th class="w-36">{{ t.get('common.actions') }}</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-entry>
@@ -55,7 +55,8 @@
             <td>{{ entry.project?.projectName || '-' }}</td>
             <td>
               {{ entry.teamMember?.name || '-' }}
-              <span *ngIf="entry.teamMember" class="badge ms-2" [ngClass]="entry.teamMember.billingType === 'hourly' ? 'bg-primary' : 'bg-info'">
+              <span *ngIf="entry.teamMember" class="ml-2 px-2 py-0.5 rounded-full text-xs font-medium"
+                    [class]="entry.teamMember.billingType === 'hourly' ? 'bg-blue-100 text-blue-800' : 'bg-cyan-100 text-cyan-800'">
                 {{ entry.teamMember.billingType === 'hourly' ? 'H' : 'M' }}
               </span>
             </td>
@@ -70,7 +71,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="7" class="text-center text-muted py-4">{{ t.get('common.noData') }}</td>
+            <td colspan="7" class="text-center text-gray-500 py-8">{{ t.get('common.noData') }}</td>
           </tr>
         </ng-template>
       </p-table>
@@ -78,39 +79,39 @@
   </div>
   
   <p-dialog [(visible)]="dialogVisible" [header]="editMode ? t.get('timeEntries.editEntry') : t.get('timeEntries.addEntry')" [modal]="true" [style]="{width: '500px'}">
-    <div class="mb-3">
-      <label for="project" class="form-label fw-semibold">{{ t.get('timeEntries.project') }} <span class="text-danger">*</span></label>
+    <div class="mb-4">
+      <label for="project" class="block text-sm font-semibold text-gray-700 mb-1">{{ t.get('timeEntries.project') }} <span class="text-red-500">*</span></label>
       <p-select id="project" [(ngModel)]="currentEntry.projectId" [options]="projectOptions" 
                 optionLabel="label" optionValue="value" [placeholder]="t.get('timeEntries.project')" 
-                class="w-100" (onChange)="onProjectChange()"
+                class="w-full" (onChange)="onProjectChange()"
                 [ngClass]="{'ng-invalid ng-dirty': submitted && !currentEntry.projectId}"></p-select>
-      <small *ngIf="submitted && !currentEntry.projectId" class="text-danger">{{ t.get('common.required') }}</small>
+      <small *ngIf="submitted && !currentEntry.projectId" class="text-red-500 text-sm">{{ t.get('common.required') }}</small>
     </div>
-    <div class="mb-3">
-      <label for="teamMember" class="form-label fw-semibold">{{ t.get('timeEntries.teamMember') }} <span class="text-danger">*</span></label>
+    <div class="mb-4">
+      <label for="teamMember" class="block text-sm font-semibold text-gray-700 mb-1">{{ t.get('timeEntries.teamMember') }} <span class="text-red-500">*</span></label>
       <p-select id="teamMember" [(ngModel)]="currentEntry.teamMemberId" [options]="assignedMemberOptions" 
-                optionLabel="label" optionValue="value" [placeholder]="t.get('timeEntries.teamMember')" class="w-100"
+                optionLabel="label" optionValue="value" [placeholder]="t.get('timeEntries.teamMember')" class="w-full"
                 [ngClass]="{'ng-invalid ng-dirty': submitted && !currentEntry.teamMemberId}"></p-select>
-      <small *ngIf="submitted && !currentEntry.teamMemberId" class="text-danger">{{ t.get('common.required') }}</small>
+      <small *ngIf="submitted && !currentEntry.teamMemberId" class="text-red-500 text-sm">{{ t.get('common.required') }}</small>
     </div>
-    <div class="mb-3">
-      <label for="date" class="form-label fw-semibold">{{ t.get('timeEntries.date') }} <span class="text-danger">*</span></label>
-      <p-datepicker id="date" [(ngModel)]="entryDateObj" dateFormat="yy-mm-dd" class="w-100"
+    <div class="mb-4">
+      <label for="date" class="block text-sm font-semibold text-gray-700 mb-1">{{ t.get('timeEntries.date') }} <span class="text-red-500">*</span></label>
+      <p-datepicker id="date" [(ngModel)]="entryDateObj" dateFormat="yy-mm-dd" class="w-full"
                     [ngClass]="{'ng-invalid ng-dirty': submitted && !entryDateObj}"></p-datepicker>
-      <small *ngIf="submitted && !entryDateObj" class="text-danger">{{ t.get('common.required') }}</small>
+      <small *ngIf="submitted && !entryDateObj" class="text-red-500 text-sm">{{ t.get('common.required') }}</small>
     </div>
-    <div class="mb-3">
-      <label for="hours" class="form-label fw-semibold">{{ t.get('timeEntries.hours') }} <span class="text-danger">*</span></label>
+    <div class="mb-4">
+      <label for="hours" class="block text-sm font-semibold text-gray-700 mb-1">{{ t.get('timeEntries.hours') }} <span class="text-red-500">*</span></label>
       <p-inputNumber id="hours" [(ngModel)]="currentEntry.hours" [minFractionDigits]="1" [maxFractionDigits]="2" 
-                     [min]="0.1" [max]="24" class="w-100"
+                     [min]="0.1" [max]="24" class="w-full"
                      [ngClass]="{'ng-invalid ng-dirty': submitted && !currentEntry.hours}"></p-inputNumber>
-      <small *ngIf="submitted && !currentEntry.hours" class="text-danger">{{ t.get('common.required') }}</small>
+      <small *ngIf="submitted && !currentEntry.hours" class="text-red-500 text-sm">{{ t.get('common.required') }}</small>
     </div>
-    <div class="mb-3">
-      <label for="description" class="form-label fw-semibold">{{ t.get('timeEntries.description') }}</label>
-      <textarea pTextarea id="description" [(ngModel)]="currentEntry.description" class="w-100" rows="3"></textarea>
+    <div class="mb-4">
+      <label for="description" class="block text-sm font-semibold text-gray-700 mb-1">{{ t.get('timeEntries.description') }}</label>
+      <textarea pTextarea id="description" [(ngModel)]="currentEntry.description" class="w-full" rows="3"></textarea>
     </div>
-    <div class="d-flex justify-content-end gap-2 mt-4">
+    <div class="flex justify-end gap-2 mt-6">
       <p-button [label]="t.get('common.cancel')" [text]="true" (onClick)="dialogVisible = false"></p-button>
       <p-button [label]="t.get('common.save')" (onClick)="saveEntry()"></p-button>
     </div>

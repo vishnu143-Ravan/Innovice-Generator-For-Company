@@ -103,13 +103,13 @@ export class ProjectsComponent implements OnInit {
 
   getStatusClass(status: string): string {
     const classes: Record<string, string> = {
-      'pending': 'bg-warning text-dark',
-      'in_progress': 'bg-info text-dark',
-      'completed': 'bg-success',
-      'on_hold': 'bg-secondary',
-      'cancelled': 'bg-danger'
+      'pending': 'bg-yellow-100 text-yellow-800',
+      'in_progress': 'bg-blue-100 text-blue-800',
+      'completed': 'bg-green-100 text-green-800',
+      'on_hold': 'bg-gray-100 text-gray-800',
+      'cancelled': 'bg-red-100 text-red-800'
     };
-    return classes[status] || 'bg-secondary';
+    return classes[status] || 'bg-gray-100 text-gray-800';
   }
 
   openDialog() {
