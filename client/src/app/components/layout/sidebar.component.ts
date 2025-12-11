@@ -9,8 +9,7 @@ import { RouterModule } from '@angular/router';
   template: `
     <div class="d-flex flex-column vh-100 bg-dark text-white position-fixed" style="width: 250px;">
       <div class="d-flex align-items-center gap-2 p-3 border-bottom border-secondary">
-        <i class="pi pi-briefcase fs-4"></i>
-        <span class="fw-semibold fs-5">Uniquode Projects</span>
+        <img src="logo.png" alt="Uniquode" style="height: 32px;">
       </div>
       <nav class="nav flex-column mt-2">
         <a routerLink="/clients" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-white-50 py-3 px-3">
