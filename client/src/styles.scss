@@ -15,10 +15,23 @@ html, body {
 }
 
 .p-dialog {
-  max-height: 90vh;
-  
   .p-dialog-content {
-    overflow-y: auto;
-    max-height: calc(90vh - 100px);
+    overflow: visible !important;
   }
+  
+  .p-dialog-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+}
+
+.p-select, .p-multiselect, .p-datepicker {
+  width: 100%;
+}
+
+.p-multiselect-panel {
+  max-width: 450px;
 }
