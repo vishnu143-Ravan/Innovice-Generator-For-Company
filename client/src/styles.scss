@@ -13,3 +13,12 @@ html, body {
     padding: 0 0 1rem 0;
   }
 }
+
+.p-dialog {
+  max-height: 90vh;
+  
+  .p-dialog-content {
+    overflow-y: auto;
+    max-height: calc(90vh - 100px);
+  }
+}

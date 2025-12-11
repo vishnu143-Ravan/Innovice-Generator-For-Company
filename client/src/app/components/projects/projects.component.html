@@ -52,7 +52,7 @@
     </div>
   </div>
   
-  <p-dialog [(visible)]="dialogVisible" [header]="editMode ? t.get('projects.editProject') : t.get('projects.addProject')" [modal]="true" [style]="{width: '600px'}">
+  <p-dialog [(visible)]="dialogVisible" [header]="editMode ? t.get('projects.editProject') : t.get('projects.addProject')" [modal]="true" [style]="{width: '600px'}" [contentStyle]="{overflow: 'visible'}">
     <div class="mb-3">
       <label for="projectName" class="form-label fw-semibold">{{ t.get('projects.projectName') }} <span class="text-danger">*</span></label>
       <input pInputText id="projectName" [(ngModel)]="currentProject.projectName" class="w-100"
