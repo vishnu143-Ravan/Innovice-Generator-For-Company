@@ -8,33 +8,33 @@ import { TranslateService } from '../../shared/translate.service';
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
-    <div class="flex flex-col h-screen w-64 bg-gray-900 text-white fixed">
-      <div class="flex items-center gap-2 p-4 border-b border-gray-700">
-        <img src="logo.png" alt="Uniquode" class="h-8">
+    <div class="d-flex flex-column vh-100 bg-dark text-white position-fixed" style="width: 250px;">
+      <div class="d-flex align-items-center gap-2 p-3 border-bottom border-secondary">
+        <img src="logo.png" alt="Uniquode" style="height: 32px;">
       </div>
-      <nav class="flex flex-col mt-2">
-        <a routerLink="/clients" routerLinkActive="bg-white/15 text-white border-l-4 border-blue-500" 
-           class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-white/10 hover:text-white transition-colors">
+      <nav class="d-flex flex-column mt-2">
+        <a routerLink="/clients" routerLinkActive="active bg-white bg-opacity-10 text-white border-start border-primary border-4" 
+           class="d-flex align-items-center gap-3 px-3 py-2 text-secondary text-decoration-none">
           <i class="pi pi-users"></i>
           <span>{{ t.get('nav.clients') }}</span>
         </a>
-        <a routerLink="/team-members" routerLinkActive="bg-white/15 text-white border-l-4 border-blue-500" 
-           class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-white/10 hover:text-white transition-colors">
+        <a routerLink="/team-members" routerLinkActive="active bg-white bg-opacity-10 text-white border-start border-primary border-4" 
+           class="d-flex align-items-center gap-3 px-3 py-2 text-secondary text-decoration-none">
           <i class="pi pi-user"></i>
           <span>{{ t.get('nav.teamMembers') }}</span>
         </a>
-        <a routerLink="/projects" routerLinkActive="bg-white/15 text-white border-l-4 border-blue-500" 
-           class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-white/10 hover:text-white transition-colors">
+        <a routerLink="/projects" routerLinkActive="active bg-white bg-opacity-10 text-white border-start border-primary border-4" 
+           class="d-flex align-items-center gap-3 px-3 py-2 text-secondary text-decoration-none">
           <i class="pi pi-folder"></i>
           <span>{{ t.get('nav.projects') }}</span>
         </a>
-        <a routerLink="/time-entries" routerLinkActive="bg-white/15 text-white border-l-4 border-blue-500" 
-           class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-white/10 hover:text-white transition-colors">
+        <a routerLink="/time-entries" routerLinkActive="active bg-white bg-opacity-10 text-white border-start border-primary border-4" 
+           class="d-flex align-items-center gap-3 px-3 py-2 text-secondary text-decoration-none">
           <i class="pi pi-clock"></i>
           <span>{{ t.get('nav.timeTracking') }}</span>
         </a>
-        <a routerLink="/invoices" routerLinkActive="bg-white/15 text-white border-l-4 border-blue-500" 
-           class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-white/10 hover:text-white transition-colors">
+        <a routerLink="/invoices" routerLinkActive="active bg-white bg-opacity-10 text-white border-start border-primary border-4" 
+           class="d-flex align-items-center gap-3 px-3 py-2 text-secondary text-decoration-none">
           <i class="pi pi-file"></i>
           <span>{{ t.get('nav.invoices') }}</span>
         </a>

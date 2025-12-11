@@ -9,9 +9,9 @@ import { HeaderComponent } from './components/layout/header.component';
   imports: [RouterOutlet, SidebarComponent, HeaderComponent],
   template: `
     <app-sidebar></app-sidebar>
-    <div class="ml-64">
+    <div style="margin-left: 250px;">
       <app-header></app-header>
-      <div class="min-h-screen bg-gray-100 p-6">
+      <div class="min-vh-100 bg-light p-4">
         <router-outlet></router-outlet>
       </div>
     </div>

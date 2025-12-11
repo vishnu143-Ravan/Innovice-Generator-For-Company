@@ -7,21 +7,19 @@ import { TranslateService } from '../../shared/translate.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <header class="flex items-center justify-end px-6 py-3 bg-white border-b border-gray-200 shadow-sm">
-      <div class="flex gap-2">
+    <header class="d-flex align-items-center justify-content-end px-4 py-2 bg-white border-bottom shadow-sm">
+      <div class="d-flex gap-2">
         <button 
-          class="px-4 py-1.5 rounded-full text-sm font-semibold border-2 transition-all duration-200"
-          [class]="translateService.currentLang() === 'en' 
-            ? 'bg-emerald-500 border-emerald-500 text-white' 
-            : 'bg-white border-gray-300 text-gray-600 hover:border-emerald-500 hover:text-emerald-500'"
+          class="btn btn-sm rounded-pill px-3"
+          [class.btn-success]="translateService.currentLang() === 'en'"
+          [class.btn-outline-secondary]="translateService.currentLang() !== 'en'"
           (click)="switchLang('en')">
           EN
         </button>
         <button 
-          class="px-4 py-1.5 rounded-full text-sm font-semibold border-2 transition-all duration-200"
-          [class]="translateService.currentLang() === 'fr' 
-            ? 'bg-emerald-500 border-emerald-500 text-white' 
-            : 'bg-white border-gray-300 text-gray-600 hover:border-emerald-500 hover:text-emerald-500'"
+          class="btn btn-sm rounded-pill px-3"
+          [class.btn-success]="translateService.currentLang() === 'fr'"
+          [class.btn-outline-secondary]="translateService.currentLang() !== 'fr'"
           (click)="switchLang('fr')">
           FR
         </button>

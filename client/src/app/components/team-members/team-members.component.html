@@ -1,11 +1,11 @@
-<div class="p-6">
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-2xl font-bold text-gray-800">{{ t.get('teamMembers.title') }}</h2>
+<div class="p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-dark">{{ t.get('teamMembers.title') }}</h2>
     <p-button icon="pi pi-plus" [label]="t.get('teamMembers.addMember')" (onClick)="openDialog()"></p-button>
   </div>
   
-  <div class="bg-white rounded-lg shadow-md">
-    <div class="p-4">
+  <div class="card shadow-sm">
+    <div class="card-body">
       <p-table [value]="teamMembers" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
                [rowsPerPageOptions]="[5,10,25,50]" dataKey="id" [loading]="loading"
                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} members">
@@ -16,7 +16,7 @@
             <th pSortableColumn="role">{{ t.get('teamMembers.role') }} <p-sortIcon field="role"></p-sortIcon></th>
             <th>{{ t.get('teamMembers.billingType') }}</th>
             <th pSortableColumn="rate">{{ t.get('teamMembers.rate') }} <p-sortIcon field="rate"></p-sortIcon></th>
-            <th class="w-36">{{ t.get('common.actions') }}</th>
+            <th style="width: 140px;">{{ t.get('common.actions') }}</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-member>
@@ -25,8 +25,7 @@
             <td>{{ member.email }}</td>
             <td>{{ member.role }}</td>
             <td>
-              <span class="px-2 py-1 rounded-full text-xs font-medium" 
-                    [class]="member.billingType === 'hourly' ? 'bg-blue-100 text-blue-800' : 'bg-cyan-100 text-cyan-800'">
+              <span class="badge" [class.bg-primary]="member.billingType === 'hourly'" [class.bg-info]="member.billingType !== 'hourly'">
                 {{ member.billingType === 'hourly' ? t.get('teamMembers.hourly') : t.get('teamMembers.monthly') }}
               </span>
             </td>
@@ -39,7 +38,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="6" class="text-center text-gray-500 py-8">{{ t.get('common.noData') }}</td>
+            <td colspan="6" class="text-center text-muted py-4">{{ t.get('common.noData') }}</td>
           </tr>
         </ng-template>
       </p-table>
@@ -47,39 +46,39 @@
   </div>
   
   <p-dialog [(visible)]="dialogVisible" [header]="editMode ? t.get('teamMembers.editMember') : t.get('teamMembers.addMember')" [modal]="true" [style]="{width: '500px'}">
-    <div class="mb-4">
-      <label for="name" class="block text-sm font-semibold text-gray-700 mb-1">{{ t.get('teamMembers.name') }} <span class="text-red-500">*</span></label>
-      <input pInputText id="name" [(ngModel)]="currentMember.name" class="w-full"
+    <div class="mb-3">
+      <label for="name" class="form-label fw-semibold">{{ t.get('teamMembers.name') }} <span class="text-danger">*</span></label>
+      <input pInputText id="name" [(ngModel)]="currentMember.name" class="w-100"
              [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.name}" />
-      <small *ngIf="submitted && !currentMember.name" class="text-red-500 text-sm">{{ t.get('common.required') }}</small>
+      <small *ngIf="submitted && !currentMember.name" class="text-danger">{{ t.get('common.required') }}</small>
     </div>
-    <div class="mb-4">
-      <label for="email" class="block text-sm font-semibold text-gray-700 mb-1">{{ t.get('teamMembers.email') }} <span class="text-red-500">*</span></label>
-      <input pInputText id="email" [(ngModel)]="currentMember.email" class="w-full" type="email"
+    <div class="mb-3">
+      <label for="email" class="form-label fw-semibold">{{ t.get('teamMembers.email') }} <span class="text-danger">*</span></label>
+      <input pInputText id="email" [(ngModel)]="currentMember.email" class="w-100" type="email"
              [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.email}" />
-      <small *ngIf="submitted && !currentMember.email" class="text-red-500 text-sm">{{ t.get('common.required') }}</small>
-      <small *ngIf="submitted && currentMember.email && !isValidEmail(currentMember.email)" class="text-red-500 text-sm">{{ t.get('common.invalidEmail') }}</small>
+      <small *ngIf="submitted && !currentMember.email" class="text-danger">{{ t.get('common.required') }}</small>
+      <small *ngIf="submitted && currentMember.email && !isValidEmail(currentMember.email)" class="text-danger">{{ t.get('common.invalidEmail') }}</small>
     </div>
-    <div class="mb-4">
-      <label for="role" class="block text-sm font-semibold text-gray-700 mb-1">{{ t.get('teamMembers.role') }} <span class="text-red-500">*</span></label>
-      <input pInputText id="role" [(ngModel)]="currentMember.role" class="w-full"
+    <div class="mb-3">
+      <label for="role" class="form-label fw-semibold">{{ t.get('teamMembers.role') }} <span class="text-danger">*</span></label>
+      <input pInputText id="role" [(ngModel)]="currentMember.role" class="w-100"
              [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.role}" />
-      <small *ngIf="submitted && !currentMember.role" class="text-red-500 text-sm">{{ t.get('common.required') }}</small>
+      <small *ngIf="submitted && !currentMember.role" class="text-danger">{{ t.get('common.required') }}</small>
     </div>
-    <div class="mb-4">
-      <label for="billingType" class="block text-sm font-semibold text-gray-700 mb-1">{{ t.get('teamMembers.billingType') }} <span class="text-red-500">*</span></label>
+    <div class="mb-3">
+      <label for="billingType" class="form-label fw-semibold">{{ t.get('teamMembers.billingType') }} <span class="text-danger">*</span></label>
       <p-select id="billingType" [(ngModel)]="currentMember.billingType" [options]="billingTypes" 
-                optionLabel="label" optionValue="value" [placeholder]="t.get('teamMembers.billingType')" class="w-full"
+                optionLabel="label" optionValue="value" [placeholder]="t.get('teamMembers.billingType')" class="w-100"
                 [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.billingType}"></p-select>
-      <small *ngIf="submitted && !currentMember.billingType" class="text-red-500 text-sm">{{ t.get('common.required') }}</small>
+      <small *ngIf="submitted && !currentMember.billingType" class="text-danger">{{ t.get('common.required') }}</small>
     </div>
-    <div class="mb-4">
-      <label for="rate" class="block text-sm font-semibold text-gray-700 mb-1">{{ t.get('teamMembers.rate') }} <span class="text-red-500">*</span></label>
-      <p-inputNumber id="rate" [(ngModel)]="currentMember.rate" mode="currency" currency="USD" locale="en-US" class="w-full"
+    <div class="mb-3">
+      <label for="rate" class="form-label fw-semibold">{{ t.get('teamMembers.rate') }} <span class="text-danger">*</span></label>
+      <p-inputNumber id="rate" [(ngModel)]="currentMember.rate" mode="currency" currency="USD" locale="en-US" class="w-100"
                      [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.rate}"></p-inputNumber>
-      <small *ngIf="submitted && !currentMember.rate" class="text-red-500 text-sm">{{ t.get('common.required') }}</small>
+      <small *ngIf="submitted && !currentMember.rate" class="text-danger">{{ t.get('common.required') }}</small>
     </div>
-    <div class="flex justify-end gap-2 mt-6">
+    <div class="d-flex justify-content-end gap-2 mt-4">
       <p-button [label]="t.get('common.cancel')" [text]="true" (onClick)="dialogVisible = false"></p-button>
       <p-button [label]="t.get('common.save')" (onClick)="saveMember()"></p-button>
     </div>
