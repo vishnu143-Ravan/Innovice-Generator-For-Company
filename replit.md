@@ -1,7 +1,7 @@
-# Project & Resource Management System
+# Uniquode Projects
 
 ## Overview
-A complete project and resource management system with invoicing capabilities. Built with Angular frontend using PrimeNG for data grids and Bootstrap for styling, Node.js/Express backend, and PostgreSQL database.
+A complete project and resource management system with invoicing capabilities for Uniquode. Built with Angular frontend using PrimeNG for data grids and Bootstrap for styling, Node.js/Express backend, and PostgreSQL database.
 
 ## Tech Stack
 - **Frontend**: Angular 21 with PrimeNG v19 (DataTables, Dialogs, Forms) and Bootstrap 5 for styling
