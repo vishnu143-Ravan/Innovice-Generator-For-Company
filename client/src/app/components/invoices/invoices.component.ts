@@ -272,23 +272,30 @@ export class InvoicesComponent implements OnInit {
   }
 
   generateInvoice() {
-    const data = {
-      clientId: this.generateData.clientId,
-      projectId: this.generateData.projectId || undefined,
-      dateFrom: this.formatDate(this.dateFromObj!),
-      dateTo: this.formatDate(this.dateToObj!)
-    };
-    
-    this.api.generateInvoice(data).subscribe({
-      next: (invoice) => {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Invoice generated successfully' });
-        this.loadData();
-        this.generateDialogVisible = false;
-        this.selectedInvoice = invoice;
-        this.viewDialogVisible = true;
-      },
-      error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.error || 'Failed to generate invoice' });
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to generate this invoice?',
+      header: 'Confirm Generate',
+      icon: 'pi pi-check-circle',
+      accept: () => {
+        const data = {
+          clientId: this.generateData.clientId,
+          projectId: this.generateData.projectId || undefined,
+          dateFrom: this.formatDate(this.dateFromObj!),
+          dateTo: this.formatDate(this.dateToObj!)
+        };
+        
+        this.api.generateInvoice(data).subscribe({
+          next: (invoice) => {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Invoice generated successfully' });
+            this.loadData();
+            this.generateDialogVisible = false;
+            this.selectedInvoice = invoice;
+            this.viewDialogVisible = true;
+          },
+          error: (err) => {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.error || 'Failed to generate invoice' });
+          }
+        });
       }
     });
   }

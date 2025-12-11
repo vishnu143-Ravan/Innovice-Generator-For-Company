@@ -139,29 +139,36 @@ export class ClientsComponent implements OnInit {
   }
 
   saveClient() {
-    if (this.editMode && this.currentClient.id) {
-      this.api.updateClient(this.currentClient.id, this.currentClient).subscribe({
-        next: () => {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Client updated' });
-          this.loadClients();
-          this.dialogVisible = false;
-        },
-        error: () => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update client' });
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to save this client?',
+      header: 'Confirm Save',
+      icon: 'pi pi-check-circle',
+      accept: () => {
+        if (this.editMode && this.currentClient.id) {
+          this.api.updateClient(this.currentClient.id, this.currentClient).subscribe({
+            next: () => {
+              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Client updated successfully' });
+              this.loadClients();
+              this.dialogVisible = false;
+            },
+            error: () => {
+              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update client' });
+            }
+          });
+        } else {
+          this.api.createClient(this.currentClient).subscribe({
+            next: () => {
+              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Client created successfully' });
+              this.loadClients();
+              this.dialogVisible = false;
+            },
+            error: () => {
+              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create client' });
+            }
+          });
         }
-      });
-    } else {
-      this.api.createClient(this.currentClient).subscribe({
-        next: () => {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Client created' });
-          this.loadClients();
-          this.dialogVisible = false;
-        },
-        error: () => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create client' });
-        }
-      });
-    }
+      }
+    });
   }
 
   confirmDelete(client: Client) {

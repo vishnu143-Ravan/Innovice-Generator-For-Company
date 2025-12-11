@@ -232,36 +232,43 @@ export class ProjectsComponent implements OnInit {
   }
 
   saveProject() {
-    const data = {
-      ...this.currentProject,
-      startDate: this.startDateObj ? this.formatDate(this.startDateObj) : null,
-      endDate: this.endDateObj ? this.formatDate(this.endDateObj) : null,
-      teamMemberIds: this.selectedTeamMemberIds
-    };
-    
-    if (this.editMode && this.currentProject.id) {
-      this.api.updateProject(this.currentProject.id, data).subscribe({
-        next: () => {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated' });
-          this.loadData();
-          this.dialogVisible = false;
-        },
-        error: () => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update project' });
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to save this project?',
+      header: 'Confirm Save',
+      icon: 'pi pi-check-circle',
+      accept: () => {
+        const data = {
+          ...this.currentProject,
+          startDate: this.startDateObj ? this.formatDate(this.startDateObj) : null,
+          endDate: this.endDateObj ? this.formatDate(this.endDateObj) : null,
+          teamMemberIds: this.selectedTeamMemberIds
+        };
+        
+        if (this.editMode && this.currentProject.id) {
+          this.api.updateProject(this.currentProject.id, data).subscribe({
+            next: () => {
+              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated successfully' });
+              this.loadData();
+              this.dialogVisible = false;
+            },
+            error: () => {
+              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update project' });
+            }
+          });
+        } else {
+          this.api.createProject(data).subscribe({
+            next: () => {
+              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project created successfully' });
+              this.loadData();
+              this.dialogVisible = false;
+            },
+            error: () => {
+              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create project' });
+            }
+          });
         }
-      });
-    } else {
-      this.api.createProject(data).subscribe({
-        next: () => {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project created' });
-          this.loadData();
-          this.dialogVisible = false;
-        },
-        error: () => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create project' });
-        }
-      });
-    }
+      }
+    });
   }
 
   formatDate(date: Date): string {

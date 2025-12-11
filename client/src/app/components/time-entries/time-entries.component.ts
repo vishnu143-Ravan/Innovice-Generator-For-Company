@@ -265,35 +265,42 @@ export class TimeEntriesComponent implements OnInit {
   }
 
   saveEntry() {
-    const data = {
-      ...this.currentEntry,
-      date: this.formatDate(this.entryDateObj!),
-      hours: String(this.currentEntry.hours)
-    };
-    
-    if (this.editMode && this.currentEntry.id) {
-      this.api.updateTimeEntry(this.currentEntry.id, data).subscribe({
-        next: () => {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Time entry updated' });
-          this.loadEntries();
-          this.dialogVisible = false;
-        },
-        error: () => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update time entry' });
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to save this time entry?',
+      header: 'Confirm Save',
+      icon: 'pi pi-check-circle',
+      accept: () => {
+        const data = {
+          ...this.currentEntry,
+          date: this.formatDate(this.entryDateObj!),
+          hours: String(this.currentEntry.hours)
+        };
+        
+        if (this.editMode && this.currentEntry.id) {
+          this.api.updateTimeEntry(this.currentEntry.id, data).subscribe({
+            next: () => {
+              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Time entry updated successfully' });
+              this.loadEntries();
+              this.dialogVisible = false;
+            },
+            error: () => {
+              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update time entry' });
+            }
+          });
+        } else {
+          this.api.createTimeEntry(data).subscribe({
+            next: () => {
+              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Time entry created successfully' });
+              this.loadEntries();
+              this.dialogVisible = false;
+            },
+            error: () => {
+              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create time entry' });
+            }
+          });
         }
-      });
-    } else {
-      this.api.createTimeEntry(data).subscribe({
-        next: () => {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Time entry created' });
-          this.loadEntries();
-          this.dialogVisible = false;
-        },
-        error: () => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create time entry' });
-        }
-      });
-    }
+      }
+    });
   }
 
   confirmDelete(entry: TimeEntry) {

@@ -161,31 +161,38 @@ export class TeamMembersComponent implements OnInit {
   }
 
   saveMember() {
-    const data = { ...this.currentMember, rate: String(this.currentMember.rate) };
-    
-    if (this.editMode && this.currentMember.id) {
-      this.api.updateTeamMember(this.currentMember.id, data).subscribe({
-        next: () => {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Team member updated' });
-          this.loadMembers();
-          this.dialogVisible = false;
-        },
-        error: () => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update team member' });
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to save this team member?',
+      header: 'Confirm Save',
+      icon: 'pi pi-check-circle',
+      accept: () => {
+        const data = { ...this.currentMember, rate: String(this.currentMember.rate) };
+        
+        if (this.editMode && this.currentMember.id) {
+          this.api.updateTeamMember(this.currentMember.id, data).subscribe({
+            next: () => {
+              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Team member updated successfully' });
+              this.loadMembers();
+              this.dialogVisible = false;
+            },
+            error: () => {
+              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update team member' });
+            }
+          });
+        } else {
+          this.api.createTeamMember(data).subscribe({
+            next: () => {
+              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Team member created successfully' });
+              this.loadMembers();
+              this.dialogVisible = false;
+            },
+            error: () => {
+              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create team member' });
+            }
+          });
         }
-      });
-    } else {
-      this.api.createTeamMember(data).subscribe({
-        next: () => {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Team member created' });
-          this.loadMembers();
-          this.dialogVisible = false;
-        },
-        error: () => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create team member' });
-        }
-      });
-    }
+      }
+    });
   }
 
   confirmDelete(member: TeamMember) {
