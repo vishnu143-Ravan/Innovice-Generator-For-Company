@@ -13,3 +13,155 @@ html, body {
     padding: 0 0 1rem 0;
   }
 }
+
+:root {
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #ffffff;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-color: #dee2e6;
+  --card-bg: #ffffff;
+  --card-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+body.dark-theme {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --text-primary: #e4e4e7;
+  --text-secondary: #a1a1aa;
+  --border-color: #3f3f46;
+  --card-bg: #1e293b;
+  --card-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3);
+  
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary);
+  
+  .card {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: var(--card-shadow);
+  }
+  
+  .card-body {
+    background-color: var(--card-bg) !important;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary) !important;
+  }
+  
+  .text-muted {
+    color: var(--text-secondary) !important;
+  }
+  
+  .form-label {
+    color: var(--text-primary) !important;
+  }
+  
+  .p-datatable {
+    .p-datatable-thead > tr > th {
+      background-color: var(--card-bg) !important;
+      color: var(--text-primary) !important;
+      border-color: var(--border-color) !important;
+    }
+    
+    .p-datatable-tbody > tr {
+      background-color: var(--card-bg) !important;
+      color: var(--text-primary) !important;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+      }
+      
+      > td {
+        border-color: var(--border-color) !important;
+      }
+    }
+    
+    .p-datatable-tfoot > tr > td {
+      background-color: var(--card-bg) !important;
+      color: var(--text-primary) !important;
+      border-color: var(--border-color) !important;
+    }
+  }
+  
+  .p-paginator {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+  }
+  
+  .p-dialog {
+    .p-dialog-header {
+      background-color: var(--card-bg) !important;
+      color: var(--text-primary) !important;
+    }
+    
+    .p-dialog-content {
+      background-color: var(--card-bg) !important;
+      color: var(--text-primary) !important;
+    }
+    
+    .p-dialog-footer {
+      background-color: var(--card-bg) !important;
+    }
+  }
+  
+  .p-inputtext, .p-select, .p-multiselect, .p-datepicker, .p-inputnumber {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+  }
+  
+  .p-select-panel, .p-multiselect-panel, .p-datepicker-panel {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+  }
+  
+  textarea.p-inputtextarea {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+  }
+  
+  .table {
+    color: var(--text-primary);
+    
+    thead {
+      background-color: #0f172a !important;
+      
+      th {
+        background-color: #0f172a !important;
+        color: white !important;
+      }
+    }
+    
+    tbody tr {
+      background-color: var(--card-bg) !important;
+      
+      &:nth-of-type(odd) {
+        background-color: rgba(255, 255, 255, 0.02) !important;
+      }
+      
+      td {
+        color: var(--text-primary) !important;
+        border-color: var(--border-color) !important;
+      }
+    }
+    
+    tfoot tr td {
+      color: var(--text-primary) !important;
+      border-color: var(--border-color) !important;
+    }
+  }
+  
+  .table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    color: var(--text-primary) !important;
+  }
+}
+
+body.light-theme {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}

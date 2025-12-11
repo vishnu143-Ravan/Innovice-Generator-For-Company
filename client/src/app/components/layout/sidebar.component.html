@@ -2,7 +2,7 @@
   <div class="d-flex align-items-center gap-2 p-3 border-bottom border-secondary">
     <img src="logo.png" alt="Uniquode" style="height: 32px;">
   </div>
-  <nav class="nav flex-column mt-2">
+  <nav class="nav flex-column mt-2 flex-grow-1">
     <a routerLink="/clients" routerLinkActive="active" class="nav-link d-flex align-items-center gap-2 text-white-50 py-3 px-3">
       <i class="pi pi-users"></i>
       <span>Clients</span>
@@ -24,4 +24,21 @@
       <span>Invoices</span>
     </a>
   </nav>
+  
+  <div class="p-3 border-top border-secondary">
+    <div class="d-flex align-items-center justify-content-center gap-3">
+      <button class="theme-btn" 
+              [class.active]="!themeService.isDarkMode()" 
+              (click)="themeService.setDarkMode(false)"
+              title="Light Mode">
+        <i class="pi pi-sun"></i>
+      </button>
+      <button class="theme-btn theme-btn-accent" 
+              [class.active]="themeService.isDarkMode()" 
+              (click)="themeService.setDarkMode(true)"
+              title="Dark Mode">
+        <i class="pi pi-moon"></i>
+      </button>
+    </div>
+  </div>
 </div>
