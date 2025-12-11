@@ -1,17 +1,14 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { TextareaModule } from 'primeng/textarea';
-import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { ApiService } from '../../services/api.service';
 import { ConfirmSaveService } from '../../shared/confirm-save.service';
 import { TranslateService } from '../../shared/translate.service';
@@ -21,8 +18,7 @@ import { TimeEntry, Project, TeamMember } from '../../models/models';
   selector: 'app-time-entries',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, TableModule, ButtonModule,
-    DialogModule, InputTextModule, TextareaModule, InputNumberModule,
+    CommonModule, FormsModule, RouterLink, TableModule, ButtonModule,
     SelectModule, DatePickerModule, ConfirmDialogModule, ToastModule
   ],
   templateUrl: './time-entries.component.html'
@@ -31,12 +27,7 @@ export class TimeEntriesComponent implements OnInit {
   timeEntries: TimeEntry[] = [];
   projects: Project[] = [];
   teamMembers: TeamMember[] = [];
-  loading = false;
-  dialogVisible = false;
-  editMode = false;
-  currentEntry: any = {};
-  entryDateObj: Date | null = null;
-  submitted = false;
+  loading = true;
   
   filterProjectId: number | null = null;
   filterTeamMemberId: number | null = null;
@@ -45,14 +36,12 @@ export class TimeEntriesComponent implements OnInit {
   
   projectOptions: { label: string; value: number }[] = [];
   teamMemberOptions: { label: string; value: number }[] = [];
-  assignedMemberOptions: { label: string; value: number }[] = [];
 
   constructor(
     private api: ApiService,
-    private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef,
     private confirmSaveService: ConfirmSaveService,
+    private cdr: ChangeDetectorRef,
     public t: TranslateService
   ) {}
 
@@ -115,83 +104,8 @@ export class TimeEntriesComponent implements OnInit {
     }
   }
 
-  onProjectChange() {
-    const project = this.projects.find(p => p.id === this.currentEntry.projectId);
-    if (project && project.projectAssignments) {
-      this.assignedMemberOptions = project.projectAssignments.map(a => ({
-        label: `${a.teamMember?.name} (${a.teamMember?.role})`,
-        value: a.teamMemberId
-      }));
-    } else {
-      this.assignedMemberOptions = this.teamMemberOptions;
-    }
-    this.currentEntry.teamMemberId = null;
-  }
-
-  openDialog() {
-    this.currentEntry = { hours: 8 };
-    this.entryDateObj = new Date();
-    this.assignedMemberOptions = this.teamMemberOptions;
-    this.editMode = false;
-    this.submitted = false;
-    this.dialogVisible = true;
-  }
-
-  editEntry(entry: TimeEntry) {
-    this.currentEntry = { ...entry, hours: parseFloat(entry.hours) };
-    this.entryDateObj = new Date(entry.date);
-    this.onProjectChange();
-    this.currentEntry.teamMemberId = entry.teamMemberId;
-    this.editMode = true;
-    this.submitted = false;
-    this.dialogVisible = true;
-  }
-
-  isValid(): boolean {
-    return this.currentEntry.projectId && this.currentEntry.teamMemberId && 
-           this.entryDateObj && this.currentEntry.hours > 0;
-  }
-
   formatDate(date: Date): string {
     return date.toISOString().split('T')[0];
-  }
-
-  async saveEntry() {
-    this.submitted = true;
-    if (!this.isValid()) return;
-
-    const confirmed = await this.confirmSaveService.confirmSave('time entry');
-    if (!confirmed) return;
-
-    const data = {
-      ...this.currentEntry,
-      date: this.formatDate(this.entryDateObj!),
-      hours: String(this.currentEntry.hours)
-    };
-    
-    if (this.editMode && this.currentEntry.id) {
-      this.api.updateTimeEntry(this.currentEntry.id, data).subscribe({
-        next: () => {
-          this.confirmSaveService.showSuccess('Time entry updated successfully');
-          this.loadEntries();
-          this.dialogVisible = false;
-        },
-        error: () => {
-          this.confirmSaveService.showError('Failed to update time entry');
-        }
-      });
-    } else {
-      this.api.createTimeEntry(data).subscribe({
-        next: () => {
-          this.confirmSaveService.showSuccess('Time entry created successfully');
-          this.loadEntries();
-          this.dialogVisible = false;
-        },
-        error: () => {
-          this.confirmSaveService.showError('Failed to create time entry');
-        }
-      });
-    }
   }
 
   async confirmDelete(entry: TimeEntry) {

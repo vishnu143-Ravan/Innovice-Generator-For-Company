@@ -200,6 +200,19 @@ router.delete("/projects/:id", async (req, res) => {
   }
 });
 
+router.get("/time-entries/:id", async (req, res) => {
+  try {
+    const entry = await db.query.timeEntries.findFirst({
+      where: eq(timeEntries.id, parseInt(req.params.id)),
+      with: { project: { with: { client: true } }, teamMember: true },
+    });
+    if (!entry) return res.status(404).json({ error: "Time entry not found" });
+    res.json(entry);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch time entry" });
+  }
+});
+
 router.get("/time-entries", async (req, res) => {
   try {
     const { projectId, teamMemberId, dateFrom, dateTo } = req.query;

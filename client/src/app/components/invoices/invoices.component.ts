@@ -31,7 +31,7 @@ export class InvoicesComponent implements OnInit {
   invoices: Invoice[] = [];
   clients: Client[] = [];
   projects: Project[] = [];
-  loading = false;
+  loading = true;
   submitted = false;
   
   generateDialogVisible = false;

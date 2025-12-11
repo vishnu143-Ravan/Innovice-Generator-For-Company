@@ -1,7 +1,7 @@
 <div class="p-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold text-dark">{{ t.get('teamMembers.title') }}</h2>
-    <p-button icon="pi pi-plus" [label]="t.get('teamMembers.addMember')" (onClick)="openDialog()"></p-button>
+    <p-button icon="pi pi-plus" [label]="t.get('teamMembers.addMember')" [routerLink]="['/team-members/new']"></p-button>
   </div>
   
   <div class="card shadow-sm">
@@ -31,7 +31,7 @@
             </td>
             <td>${{ member.rate }}{{ member.billingType === 'hourly' ? '/hr' : '/mo' }}</td>
             <td>
-              <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="editMember(member)"></p-button>
+              <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" [routerLink]="['/team-members', member.id, 'edit']"></p-button>
               <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(member)"></p-button>
             </td>
           </tr>
@@ -44,45 +44,6 @@
       </p-table>
     </div>
   </div>
-  
-  <p-dialog [(visible)]="dialogVisible" [header]="editMode ? t.get('teamMembers.editMember') : t.get('teamMembers.addMember')" [modal]="true" [style]="{width: '500px'}">
-    <div class="mb-3">
-      <label for="name" class="form-label fw-semibold">{{ t.get('teamMembers.name') }} <span class="text-danger">*</span></label>
-      <input pInputText id="name" [(ngModel)]="currentMember.name" class="w-100"
-             [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.name}" />
-      <small *ngIf="submitted && !currentMember.name" class="text-danger">{{ t.get('common.required') }}</small>
-    </div>
-    <div class="mb-3">
-      <label for="email" class="form-label fw-semibold">{{ t.get('teamMembers.email') }} <span class="text-danger">*</span></label>
-      <input pInputText id="email" [(ngModel)]="currentMember.email" class="w-100" type="email"
-             [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.email}" />
-      <small *ngIf="submitted && !currentMember.email" class="text-danger">{{ t.get('common.required') }}</small>
-      <small *ngIf="submitted && currentMember.email && !isValidEmail(currentMember.email)" class="text-danger">{{ t.get('common.invalidEmail') }}</small>
-    </div>
-    <div class="mb-3">
-      <label for="role" class="form-label fw-semibold">{{ t.get('teamMembers.role') }} <span class="text-danger">*</span></label>
-      <input pInputText id="role" [(ngModel)]="currentMember.role" class="w-100"
-             [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.role}" />
-      <small *ngIf="submitted && !currentMember.role" class="text-danger">{{ t.get('common.required') }}</small>
-    </div>
-    <div class="mb-3">
-      <label for="billingType" class="form-label fw-semibold">{{ t.get('teamMembers.billingType') }} <span class="text-danger">*</span></label>
-      <p-select id="billingType" [(ngModel)]="currentMember.billingType" [options]="billingTypes" 
-                optionLabel="label" optionValue="value" [placeholder]="t.get('teamMembers.billingType')" class="w-100"
-                [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.billingType}"></p-select>
-      <small *ngIf="submitted && !currentMember.billingType" class="text-danger">{{ t.get('common.required') }}</small>
-    </div>
-    <div class="mb-3">
-      <label for="rate" class="form-label fw-semibold">{{ t.get('teamMembers.rate') }} <span class="text-danger">*</span></label>
-      <p-inputNumber id="rate" [(ngModel)]="currentMember.rate" mode="currency" currency="USD" locale="en-US" class="w-100"
-                     [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.rate}"></p-inputNumber>
-      <small *ngIf="submitted && !currentMember.rate" class="text-danger">{{ t.get('common.required') }}</small>
-    </div>
-    <div class="d-flex justify-content-end gap-2 mt-4">
-      <p-button [label]="t.get('common.cancel')" [text]="true" (onClick)="dialogVisible = false"></p-button>
-      <p-button [label]="t.get('common.save')" (onClick)="saveMember()"></p-button>
-    </div>
-  </p-dialog>
   
   <p-confirmDialog></p-confirmDialog>
   <p-toast></p-toast>

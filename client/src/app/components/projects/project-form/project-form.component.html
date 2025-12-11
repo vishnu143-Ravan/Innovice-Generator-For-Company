@@ -1,0 +1,64 @@
+<div class="container-fluid p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">{{ editMode ? t.get('projects.editProject') : t.get('projects.addProject') }}</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">{{ t.get('projects.projectName') }} <span class="text-danger">*</span></label>
+          <input pInputText [(ngModel)]="currentProject.projectName" class="w-100"
+                 [ngClass]="{'ng-invalid ng-dirty': submitted && !currentProject.projectName}" />
+          <small *ngIf="submitted && !currentProject.projectName" class="text-danger">{{ t.get('common.required') }}</small>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">{{ t.get('projects.client') }} <span class="text-danger">*</span></label>
+          <p-select [(ngModel)]="currentProject.clientId" [options]="clientOptions" 
+                    optionLabel="label" optionValue="value" [placeholder]="t.get('projects.client')" styleClass="w-100"
+                    [ngClass]="{'ng-invalid ng-dirty': submitted && !currentProject.clientId}"></p-select>
+          <small *ngIf="submitted && !currentProject.clientId" class="text-danger">{{ t.get('common.required') }}</small>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">{{ t.get('projects.description') }}</label>
+        <textarea pTextarea [(ngModel)]="currentProject.description" class="w-100" rows="3"></textarea>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <label class="form-label fw-semibold">{{ t.get('projects.startDate') }} <span class="text-danger">*</span></label>
+          <p-datepicker [(ngModel)]="startDateObj" dateFormat="yy-mm-dd" styleClass="w-100"
+                        [ngClass]="{'ng-invalid ng-dirty': submitted && !startDateObj}"></p-datepicker>
+          <small *ngIf="submitted && !startDateObj" class="text-danger">{{ t.get('common.required') }}</small>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label fw-semibold">{{ t.get('projects.endDate') }}</label>
+          <p-datepicker [(ngModel)]="endDateObj" dateFormat="yy-mm-dd" styleClass="w-100"></p-datepicker>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label fw-semibold">{{ t.get('projects.status') }} <span class="text-danger">*</span></label>
+          <p-select [(ngModel)]="currentProject.status" [options]="statusOptions" 
+                    optionLabel="label" optionValue="value" [placeholder]="t.get('projects.status')" styleClass="w-100"
+                    [ngClass]="{'ng-invalid ng-dirty': submitted && !currentProject.status}"></p-select>
+          <small *ngIf="submitted && !currentProject.status" class="text-danger">{{ t.get('common.required') }}</small>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label fw-semibold">{{ t.get('projects.assignedMembers') }}</label>
+          <p-multiSelect [(ngModel)]="selectedTeamMemberIds" [options]="teamMemberOptions"
+                         optionLabel="label" optionValue="value" [placeholder]="t.get('projects.assignedMembers')" 
+                         styleClass="w-100"></p-multiSelect>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+        <p-button [label]="t.get('common.cancel')" severity="secondary" [outlined]="true" (onClick)="cancel()"></p-button>
+        <p-button [label]="t.get('common.save')" (onClick)="saveProject()"></p-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

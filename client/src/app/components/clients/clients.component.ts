@@ -1,14 +1,11 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { TextareaModule } from 'primeng/textarea';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { ApiService } from '../../services/api.service';
 import { ConfirmSaveService } from '../../shared/confirm-save.service';
 import { TranslateService } from '../../shared/translate.service';
@@ -18,26 +15,20 @@ import { Client } from '../../models/models';
   selector: 'app-clients',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, TableModule, ButtonModule, 
-    DialogModule, InputTextModule, TextareaModule, 
+    CommonModule, RouterLink, TableModule, ButtonModule, 
     ConfirmDialogModule, ToastModule
   ],
   templateUrl: './clients.component.html'
 })
 export class ClientsComponent implements OnInit {
   clients: Client[] = [];
-  loading = false;
-  dialogVisible = false;
-  editMode = false;
-  currentClient: Partial<Client> = {};
-  submitted = false;
+  loading = true;
 
   constructor(
     private api: ApiService,
-    private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef,
     private confirmSaveService: ConfirmSaveService,
+    private cdr: ChangeDetectorRef,
     public t: TranslateService
   ) {}
 
@@ -60,63 +51,6 @@ export class ClientsComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
-  }
-
-  openDialog() {
-    this.currentClient = {};
-    this.editMode = false;
-    this.submitted = false;
-    this.dialogVisible = true;
-  }
-
-  editClient(client: Client) {
-    this.currentClient = { ...client };
-    this.editMode = true;
-    this.submitted = false;
-    this.dialogVisible = true;
-  }
-
-  isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  isValid(): boolean {
-    return !!this.currentClient.clientName && 
-           !!this.currentClient.email && 
-           this.isValidEmail(this.currentClient.email);
-  }
-
-  async saveClient() {
-    this.submitted = true;
-    if (!this.isValid()) return;
-
-    const confirmed = await this.confirmSaveService.confirmSave('client');
-    if (!confirmed) return;
-
-    if (this.editMode && this.currentClient.id) {
-      this.api.updateClient(this.currentClient.id, this.currentClient).subscribe({
-        next: () => {
-          this.confirmSaveService.showSuccess('Client updated successfully');
-          this.loadClients();
-          this.dialogVisible = false;
-        },
-        error: () => {
-          this.confirmSaveService.showError('Failed to update client');
-        }
-      });
-    } else {
-      this.api.createClient(this.currentClient).subscribe({
-        next: () => {
-          this.confirmSaveService.showSuccess('Client created successfully');
-          this.loadClients();
-          this.dialogVisible = false;
-        },
-        error: () => {
-          this.confirmSaveService.showError('Failed to create client');
-        }
-      });
-    }
   }
 
   async confirmDelete(client: Client) {

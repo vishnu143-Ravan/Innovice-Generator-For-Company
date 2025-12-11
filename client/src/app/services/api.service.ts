@@ -75,6 +75,10 @@ export class ApiService {
     return this.http.delete<void>(`${this.baseUrl}/projects/${id}`);
   }
 
+  getTimeEntry(id: number): Observable<TimeEntry> {
+    return this.http.get<TimeEntry>(`${this.baseUrl}/time-entries/${id}`);
+  }
+
   getTimeEntries(filters?: { projectId?: number; teamMemberId?: number; dateFrom?: string; dateTo?: string }): Observable<TimeEntry[]> {
     let params: any = {};
     if (filters) {

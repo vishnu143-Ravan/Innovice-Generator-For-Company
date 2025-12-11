@@ -1,7 +1,7 @@
 <div class="p-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold text-dark">{{ t.get('timeEntries.title') }}</h2>
-    <p-button icon="pi pi-plus" [label]="t.get('timeEntries.addEntry')" (onClick)="openDialog()"></p-button>
+    <p-button icon="pi pi-plus" [label]="t.get('timeEntries.addEntry')" [routerLink]="['/time-entries/new']"></p-button>
   </div>
   
   <div class="card shadow-sm mb-4">
@@ -65,7 +65,7 @@
             <td>${{ calculateAmount(entry) | number:'1.2-2' }}</td>
             <td>{{ entry.description || '-' }}</td>
             <td>
-              <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="editEntry(entry)"></p-button>
+              <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" [routerLink]="['/time-entries', entry.id, 'edit']"></p-button>
               <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(entry)"></p-button>
             </td>
           </tr>
@@ -78,45 +78,6 @@
       </p-table>
     </div>
   </div>
-  
-  <p-dialog [(visible)]="dialogVisible" [header]="editMode ? t.get('timeEntries.editEntry') : t.get('timeEntries.addEntry')" [modal]="true" [style]="{width: '500px'}">
-    <div class="mb-3">
-      <label for="project" class="form-label fw-semibold">{{ t.get('timeEntries.project') }} <span class="text-danger">*</span></label>
-      <p-select id="project" [(ngModel)]="currentEntry.projectId" [options]="projectOptions" 
-                optionLabel="label" optionValue="value" [placeholder]="t.get('timeEntries.project')" 
-                class="w-100" (onChange)="onProjectChange()"
-                [ngClass]="{'ng-invalid ng-dirty': submitted && !currentEntry.projectId}"></p-select>
-      <small *ngIf="submitted && !currentEntry.projectId" class="text-danger">{{ t.get('common.required') }}</small>
-    </div>
-    <div class="mb-3">
-      <label for="teamMember" class="form-label fw-semibold">{{ t.get('timeEntries.teamMember') }} <span class="text-danger">*</span></label>
-      <p-select id="teamMember" [(ngModel)]="currentEntry.teamMemberId" [options]="assignedMemberOptions" 
-                optionLabel="label" optionValue="value" [placeholder]="t.get('timeEntries.teamMember')" class="w-100"
-                [ngClass]="{'ng-invalid ng-dirty': submitted && !currentEntry.teamMemberId}"></p-select>
-      <small *ngIf="submitted && !currentEntry.teamMemberId" class="text-danger">{{ t.get('common.required') }}</small>
-    </div>
-    <div class="mb-3">
-      <label for="date" class="form-label fw-semibold">{{ t.get('timeEntries.date') }} <span class="text-danger">*</span></label>
-      <p-datepicker id="date" [(ngModel)]="entryDateObj" dateFormat="yy-mm-dd" class="w-100"
-                    [ngClass]="{'ng-invalid ng-dirty': submitted && !entryDateObj}"></p-datepicker>
-      <small *ngIf="submitted && !entryDateObj" class="text-danger">{{ t.get('common.required') }}</small>
-    </div>
-    <div class="mb-3">
-      <label for="hours" class="form-label fw-semibold">{{ t.get('timeEntries.hours') }} <span class="text-danger">*</span></label>
-      <p-inputNumber id="hours" [(ngModel)]="currentEntry.hours" [minFractionDigits]="1" [maxFractionDigits]="2" 
-                     [min]="0.1" [max]="24" class="w-100"
-                     [ngClass]="{'ng-invalid ng-dirty': submitted && !currentEntry.hours}"></p-inputNumber>
-      <small *ngIf="submitted && !currentEntry.hours" class="text-danger">{{ t.get('common.required') }}</small>
-    </div>
-    <div class="mb-3">
-      <label for="description" class="form-label fw-semibold">{{ t.get('timeEntries.description') }}</label>
-      <textarea pTextarea id="description" [(ngModel)]="currentEntry.description" class="w-100" rows="3"></textarea>
-    </div>
-    <div class="d-flex justify-content-end gap-2 mt-4">
-      <p-button [label]="t.get('common.cancel')" [text]="true" (onClick)="dialogVisible = false"></p-button>
-      <p-button [label]="t.get('common.save')" (onClick)="saveEntry()"></p-button>
-    </div>
-  </p-dialog>
   
   <p-confirmDialog></p-confirmDialog>
   <p-toast></p-toast>

@@ -1,0 +1,55 @@
+<div class="container-fluid p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">{{ editMode ? t.get('teamMembers.editMember') : t.get('teamMembers.addMember') }}</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">{{ t.get('teamMembers.name') }} <span class="text-danger">*</span></label>
+          <input pInputText [(ngModel)]="currentMember.name" class="w-100"
+                 [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.name}" />
+          <small *ngIf="submitted && !currentMember.name" class="text-danger">{{ t.get('common.required') }}</small>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">{{ t.get('teamMembers.email') }} <span class="text-danger">*</span></label>
+          <input pInputText [(ngModel)]="currentMember.email" class="w-100" type="email"
+                 [ngClass]="{'ng-invalid ng-dirty': submitted && (!currentMember.email || !isValidEmail(currentMember.email || ''))}" />
+          <small *ngIf="submitted && !currentMember.email" class="text-danger">{{ t.get('common.required') }}</small>
+          <small *ngIf="submitted && currentMember.email && !isValidEmail(currentMember.email)" class="text-danger">{{ t.get('common.invalidEmail') }}</small>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-semibold">{{ t.get('teamMembers.role') }} <span class="text-danger">*</span></label>
+          <input pInputText [(ngModel)]="currentMember.role" class="w-100"
+                 [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.role}" />
+          <small *ngIf="submitted && !currentMember.role" class="text-danger">{{ t.get('common.required') }}</small>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-semibold">{{ t.get('teamMembers.billingType') }} <span class="text-danger">*</span></label>
+          <p-select [(ngModel)]="currentMember.billingType" [options]="billingTypes" 
+                    optionLabel="label" optionValue="value" styleClass="w-100"
+                    [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.billingType}"></p-select>
+          <small *ngIf="submitted && !currentMember.billingType" class="text-danger">{{ t.get('common.required') }}</small>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-semibold">{{ t.get('teamMembers.rate') }} <span class="text-danger">*</span></label>
+          <p-inputNumber [(ngModel)]="currentMember.rate" mode="currency" currency="USD" locale="en-US" styleClass="w-100"
+                         [ngClass]="{'ng-invalid ng-dirty': submitted && !currentMember.rate}"></p-inputNumber>
+          <small *ngIf="submitted && !currentMember.rate" class="text-danger">{{ t.get('common.required') }}</small>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+        <p-button [label]="t.get('common.cancel')" severity="secondary" [outlined]="true" (onClick)="cancel()"></p-button>
+        <p-button [label]="t.get('common.save')" (onClick)="saveMember()"></p-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>
