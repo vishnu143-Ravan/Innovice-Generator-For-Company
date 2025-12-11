@@ -13,6 +13,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ApiService } from '../../services/api.service';
+import { ConfirmSaveService } from '../../shared/confirm-save.service';
 import { TimeEntry, Project, TeamMember } from '../../models/models';
 
 @Component({
@@ -23,7 +24,6 @@ import { TimeEntry, Project, TeamMember } from '../../models/models';
     DialogModule, InputTextModule, TextareaModule, InputNumberModule,
     SelectModule, DatePickerModule, ConfirmDialogModule, ToastModule
   ],
-  providers: [ConfirmationService, MessageService],
   template: `
     <div class="container-fluid p-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
@@ -163,7 +163,8 @@ export class TimeEntriesComponent implements OnInit {
     private api: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private confirmSaveService: ConfirmSaveService
   ) {}
 
   ngOnInit() {
@@ -264,60 +265,52 @@ export class TimeEntriesComponent implements OnInit {
     return date.toISOString().split('T')[0];
   }
 
-  saveEntry() {
-    this.confirmationService.confirm({
-      message: 'Are you sure you want to save this time entry?',
-      header: 'Confirm Save',
-      icon: 'pi pi-check-circle',
-      accept: () => {
-        const data = {
-          ...this.currentEntry,
-          date: this.formatDate(this.entryDateObj!),
-          hours: String(this.currentEntry.hours)
-        };
-        
-        if (this.editMode && this.currentEntry.id) {
-          this.api.updateTimeEntry(this.currentEntry.id, data).subscribe({
-            next: () => {
-              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Time entry updated successfully' });
-              this.loadEntries();
-              this.dialogVisible = false;
-            },
-            error: () => {
-              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update time entry' });
-            }
-          });
-        } else {
-          this.api.createTimeEntry(data).subscribe({
-            next: () => {
-              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Time entry created successfully' });
-              this.loadEntries();
-              this.dialogVisible = false;
-            },
-            error: () => {
-              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create time entry' });
-            }
-          });
+  async saveEntry() {
+    const confirmed = await this.confirmSaveService.confirmSave('time entry');
+    if (!confirmed) return;
+
+    const data = {
+      ...this.currentEntry,
+      date: this.formatDate(this.entryDateObj!),
+      hours: String(this.currentEntry.hours)
+    };
+    
+    if (this.editMode && this.currentEntry.id) {
+      this.api.updateTimeEntry(this.currentEntry.id, data).subscribe({
+        next: () => {
+          this.confirmSaveService.showSuccess('Time entry updated successfully');
+          this.loadEntries();
+          this.dialogVisible = false;
+        },
+        error: () => {
+          this.confirmSaveService.showError('Failed to update time entry');
         }
-      }
-    });
+      });
+    } else {
+      this.api.createTimeEntry(data).subscribe({
+        next: () => {
+          this.confirmSaveService.showSuccess('Time entry created successfully');
+          this.loadEntries();
+          this.dialogVisible = false;
+        },
+        error: () => {
+          this.confirmSaveService.showError('Failed to create time entry');
+        }
+      });
+    }
   }
 
-  confirmDelete(entry: TimeEntry) {
-    this.confirmationService.confirm({
-      message: `Are you sure you want to delete this time entry?`,
-      header: 'Confirm Delete',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.api.deleteTimeEntry(entry.id).subscribe({
-          next: () => {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Time entry deleted' });
-            this.loadEntries();
-          },
-          error: () => {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete time entry' });
-          }
-        });
+  async confirmDelete(entry: TimeEntry) {
+    const confirmed = await this.confirmSaveService.confirmDelete('time entry');
+    if (!confirmed) return;
+
+    this.api.deleteTimeEntry(entry.id).subscribe({
+      next: () => {
+        this.confirmSaveService.showSuccess('Time entry deleted');
+        this.loadEntries();
+      },
+      error: () => {
+        this.confirmSaveService.showError('Failed to delete time entry');
       }
     });
   }

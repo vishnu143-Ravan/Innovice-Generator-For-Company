@@ -11,6 +11,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ApiService } from '../../services/api.service';
+import { ConfirmSaveService } from '../../shared/confirm-save.service';
 import { TeamMember } from '../../models/models';
 
 @Component({
@@ -21,7 +22,6 @@ import { TeamMember } from '../../models/models';
     DialogModule, InputTextModule, InputNumberModule, SelectModule,
     ConfirmDialogModule, ToastModule
   ],
-  providers: [ConfirmationService, MessageService],
   template: `
     <div class="container-fluid p-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
@@ -119,7 +119,8 @@ export class TeamMembersComponent implements OnInit {
     private api: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private confirmSaveService: ConfirmSaveService
   ) {}
 
   ngOnInit() {
@@ -160,56 +161,48 @@ export class TeamMembersComponent implements OnInit {
            this.currentMember.role && this.currentMember.billingType && this.currentMember.rate;
   }
 
-  saveMember() {
-    this.confirmationService.confirm({
-      message: 'Are you sure you want to save this team member?',
-      header: 'Confirm Save',
-      icon: 'pi pi-check-circle',
-      accept: () => {
-        const data = { ...this.currentMember, rate: String(this.currentMember.rate) };
-        
-        if (this.editMode && this.currentMember.id) {
-          this.api.updateTeamMember(this.currentMember.id, data).subscribe({
-            next: () => {
-              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Team member updated successfully' });
-              this.loadMembers();
-              this.dialogVisible = false;
-            },
-            error: () => {
-              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update team member' });
-            }
-          });
-        } else {
-          this.api.createTeamMember(data).subscribe({
-            next: () => {
-              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Team member created successfully' });
-              this.loadMembers();
-              this.dialogVisible = false;
-            },
-            error: () => {
-              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create team member' });
-            }
-          });
+  async saveMember() {
+    const confirmed = await this.confirmSaveService.confirmSave('team member');
+    if (!confirmed) return;
+
+    const data = { ...this.currentMember, rate: String(this.currentMember.rate) };
+    
+    if (this.editMode && this.currentMember.id) {
+      this.api.updateTeamMember(this.currentMember.id, data).subscribe({
+        next: () => {
+          this.confirmSaveService.showSuccess('Team member updated successfully');
+          this.loadMembers();
+          this.dialogVisible = false;
+        },
+        error: () => {
+          this.confirmSaveService.showError('Failed to update team member');
         }
-      }
-    });
+      });
+    } else {
+      this.api.createTeamMember(data).subscribe({
+        next: () => {
+          this.confirmSaveService.showSuccess('Team member created successfully');
+          this.loadMembers();
+          this.dialogVisible = false;
+        },
+        error: () => {
+          this.confirmSaveService.showError('Failed to create team member');
+        }
+      });
+    }
   }
 
-  confirmDelete(member: TeamMember) {
-    this.confirmationService.confirm({
-      message: `Are you sure you want to delete "${member.name}"?`,
-      header: 'Confirm Delete',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.api.deleteTeamMember(member.id).subscribe({
-          next: () => {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Team member deleted' });
-            this.loadMembers();
-          },
-          error: () => {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete team member' });
-          }
-        });
+  async confirmDelete(member: TeamMember) {
+    const confirmed = await this.confirmSaveService.confirmDelete('team member', member.name);
+    if (!confirmed) return;
+
+    this.api.deleteTeamMember(member.id).subscribe({
+      next: () => {
+        this.confirmSaveService.showSuccess('Team member deleted');
+        this.loadMembers();
+      },
+      error: () => {
+        this.confirmSaveService.showError('Failed to delete team member');
       }
     });
   }

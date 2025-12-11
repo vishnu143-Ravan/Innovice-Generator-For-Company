@@ -10,6 +10,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ApiService } from '../../services/api.service';
+import { ConfirmSaveService } from '../../shared/confirm-save.service';
 import { Client } from '../../models/models';
 
 @Component({
@@ -20,7 +21,6 @@ import { Client } from '../../models/models';
     DialogModule, InputTextModule, TextareaModule, 
     ConfirmDialogModule, ToastModule
   ],
-  providers: [ConfirmationService, MessageService],
   template: `
     <div class="container-fluid p-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
@@ -102,7 +102,8 @@ export class ClientsComponent implements OnInit {
     private api: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private confirmSaveService: ConfirmSaveService
   ) {}
 
   ngOnInit() {
@@ -138,54 +139,46 @@ export class ClientsComponent implements OnInit {
     this.dialogVisible = true;
   }
 
-  saveClient() {
-    this.confirmationService.confirm({
-      message: 'Are you sure you want to save this client?',
-      header: 'Confirm Save',
-      icon: 'pi pi-check-circle',
-      accept: () => {
-        if (this.editMode && this.currentClient.id) {
-          this.api.updateClient(this.currentClient.id, this.currentClient).subscribe({
-            next: () => {
-              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Client updated successfully' });
-              this.loadClients();
-              this.dialogVisible = false;
-            },
-            error: () => {
-              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update client' });
-            }
-          });
-        } else {
-          this.api.createClient(this.currentClient).subscribe({
-            next: () => {
-              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Client created successfully' });
-              this.loadClients();
-              this.dialogVisible = false;
-            },
-            error: () => {
-              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create client' });
-            }
-          });
+  async saveClient() {
+    const confirmed = await this.confirmSaveService.confirmSave('client');
+    if (!confirmed) return;
+
+    if (this.editMode && this.currentClient.id) {
+      this.api.updateClient(this.currentClient.id, this.currentClient).subscribe({
+        next: () => {
+          this.confirmSaveService.showSuccess('Client updated successfully');
+          this.loadClients();
+          this.dialogVisible = false;
+        },
+        error: () => {
+          this.confirmSaveService.showError('Failed to update client');
         }
-      }
-    });
+      });
+    } else {
+      this.api.createClient(this.currentClient).subscribe({
+        next: () => {
+          this.confirmSaveService.showSuccess('Client created successfully');
+          this.loadClients();
+          this.dialogVisible = false;
+        },
+        error: () => {
+          this.confirmSaveService.showError('Failed to create client');
+        }
+      });
+    }
   }
 
-  confirmDelete(client: Client) {
-    this.confirmationService.confirm({
-      message: `Are you sure you want to delete "${client.clientName}"?`,
-      header: 'Confirm Delete',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.api.deleteClient(client.id).subscribe({
-          next: () => {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Client deleted' });
-            this.loadClients();
-          },
-          error: () => {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete client' });
-          }
-        });
+  async confirmDelete(client: Client) {
+    const confirmed = await this.confirmSaveService.confirmDelete('client', client.clientName);
+    if (!confirmed) return;
+
+    this.api.deleteClient(client.id).subscribe({
+      next: () => {
+        this.confirmSaveService.showSuccess('Client deleted');
+        this.loadClients();
+      },
+      error: () => {
+        this.confirmSaveService.showError('Failed to delete client');
       }
     });
   }

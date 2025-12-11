@@ -14,6 +14,7 @@ import { ToastModule } from 'primeng/toast';
 import { TagModule } from 'primeng/tag';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ApiService } from '../../services/api.service';
+import { ConfirmSaveService } from '../../shared/confirm-save.service';
 import { Project, Client, TeamMember } from '../../models/models';
 
 @Component({
@@ -25,7 +26,6 @@ import { Project, Client, TeamMember } from '../../models/models';
     MultiSelectModule, DatePickerModule, ConfirmDialogModule, 
     ToastModule, TagModule
   ],
-  providers: [ConfirmationService, MessageService],
   template: `
     <div class="container-fluid p-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
@@ -155,7 +155,8 @@ export class ProjectsComponent implements OnInit {
     private api: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private confirmSaveService: ConfirmSaveService
   ) {}
 
   ngOnInit() {
@@ -231,65 +232,57 @@ export class ProjectsComponent implements OnInit {
            this.startDateObj && this.currentProject.status;
   }
 
-  saveProject() {
-    this.confirmationService.confirm({
-      message: 'Are you sure you want to save this project?',
-      header: 'Confirm Save',
-      icon: 'pi pi-check-circle',
-      accept: () => {
-        const data = {
-          ...this.currentProject,
-          startDate: this.startDateObj ? this.formatDate(this.startDateObj) : null,
-          endDate: this.endDateObj ? this.formatDate(this.endDateObj) : null,
-          teamMemberIds: this.selectedTeamMemberIds
-        };
-        
-        if (this.editMode && this.currentProject.id) {
-          this.api.updateProject(this.currentProject.id, data).subscribe({
-            next: () => {
-              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project updated successfully' });
-              this.loadData();
-              this.dialogVisible = false;
-            },
-            error: () => {
-              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update project' });
-            }
-          });
-        } else {
-          this.api.createProject(data).subscribe({
-            next: () => {
-              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project created successfully' });
-              this.loadData();
-              this.dialogVisible = false;
-            },
-            error: () => {
-              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create project' });
-            }
-          });
+  async saveProject() {
+    const confirmed = await this.confirmSaveService.confirmSave('project');
+    if (!confirmed) return;
+
+    const data = {
+      ...this.currentProject,
+      startDate: this.startDateObj ? this.formatDate(this.startDateObj) : null,
+      endDate: this.endDateObj ? this.formatDate(this.endDateObj) : null,
+      teamMemberIds: this.selectedTeamMemberIds
+    };
+    
+    if (this.editMode && this.currentProject.id) {
+      this.api.updateProject(this.currentProject.id, data).subscribe({
+        next: () => {
+          this.confirmSaveService.showSuccess('Project updated successfully');
+          this.loadData();
+          this.dialogVisible = false;
+        },
+        error: () => {
+          this.confirmSaveService.showError('Failed to update project');
         }
-      }
-    });
+      });
+    } else {
+      this.api.createProject(data).subscribe({
+        next: () => {
+          this.confirmSaveService.showSuccess('Project created successfully');
+          this.loadData();
+          this.dialogVisible = false;
+        },
+        error: () => {
+          this.confirmSaveService.showError('Failed to create project');
+        }
+      });
+    }
   }
 
   formatDate(date: Date): string {
     return date.toISOString().split('T')[0];
   }
 
-  confirmDelete(project: Project) {
-    this.confirmationService.confirm({
-      message: `Are you sure you want to delete "${project.projectName}"?`,
-      header: 'Confirm Delete',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.api.deleteProject(project.id).subscribe({
-          next: () => {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Project deleted' });
-            this.loadData();
-          },
-          error: () => {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete project' });
-          }
-        });
+  async confirmDelete(project: Project) {
+    const confirmed = await this.confirmSaveService.confirmDelete('project', project.projectName);
+    if (!confirmed) return;
+
+    this.api.deleteProject(project.id).subscribe({
+      next: () => {
+        this.confirmSaveService.showSuccess('Project deleted');
+        this.loadData();
+      },
+      error: () => {
+        this.confirmSaveService.showError('Failed to delete project');
       }
     });
   }

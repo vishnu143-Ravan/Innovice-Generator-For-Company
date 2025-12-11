@@ -10,6 +10,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ApiService } from '../../services/api.service';
+import { ConfirmSaveService } from '../../shared/confirm-save.service';
 import { Invoice, Client, Project } from '../../models/models';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -22,7 +23,6 @@ import autoTable from 'jspdf-autotable';
     DialogModule, SelectModule, DatePickerModule, 
     ConfirmDialogModule, ToastModule
   ],
-  providers: [ConfirmationService, MessageService],
   template: `
     <div class="container-fluid p-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
@@ -193,7 +193,8 @@ export class InvoicesComponent implements OnInit {
     private api: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private confirmSaveService: ConfirmSaveService
   ) {}
 
   ngOnInit() {
@@ -271,31 +272,27 @@ export class InvoicesComponent implements OnInit {
     return date.toISOString().split('T')[0];
   }
 
-  generateInvoice() {
-    this.confirmationService.confirm({
-      message: 'Are you sure you want to generate this invoice?',
-      header: 'Confirm Generate',
-      icon: 'pi pi-check-circle',
-      accept: () => {
-        const data = {
-          clientId: this.generateData.clientId,
-          projectId: this.generateData.projectId || undefined,
-          dateFrom: this.formatDate(this.dateFromObj!),
-          dateTo: this.formatDate(this.dateToObj!)
-        };
-        
-        this.api.generateInvoice(data).subscribe({
-          next: (invoice) => {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Invoice generated successfully' });
-            this.loadData();
-            this.generateDialogVisible = false;
-            this.selectedInvoice = invoice;
-            this.viewDialogVisible = true;
-          },
-          error: (err) => {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.error || 'Failed to generate invoice' });
-          }
-        });
+  async generateInvoice() {
+    const confirmed = await this.confirmSaveService.confirmAction('Are you sure you want to generate this invoice?', 'Confirm Generate');
+    if (!confirmed) return;
+
+    const data = {
+      clientId: this.generateData.clientId,
+      projectId: this.generateData.projectId || undefined,
+      dateFrom: this.formatDate(this.dateFromObj!),
+      dateTo: this.formatDate(this.dateToObj!)
+    };
+    
+    this.api.generateInvoice(data).subscribe({
+      next: (invoice) => {
+        this.confirmSaveService.showSuccess('Invoice generated successfully');
+        this.loadData();
+        this.generateDialogVisible = false;
+        this.selectedInvoice = invoice;
+        this.viewDialogVisible = true;
+      },
+      error: (err) => {
+        this.confirmSaveService.showError(err.error?.error || 'Failed to generate invoice');
       }
     });
   }
