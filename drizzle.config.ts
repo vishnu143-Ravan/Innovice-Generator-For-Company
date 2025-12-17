@@ -9,6 +9,11 @@ export default defineConfig({
   schema: "./shared/schema.ts",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL,
+    host: "localhost",
+    port: 5432,
+    user: "postgres",
+    password: "12345678",
+    database: "project_management",
+    ssl: false,
   },
 });
